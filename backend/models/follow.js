@@ -7,15 +7,6 @@ module.exports = (sequelize, DataTypes) => {
   Follow.associate = models => {
     // define association here
     models.Follow.belongsTo(models.User, {
-      as: 'Follower',
-      foreignKey: {
-        allowNull: false
-      }
-    })
-  }
-  Follow.associate = models => {
-    // define association here
-    models.Follow.belongsTo(models.User, {
       as: 'Following',
       foreignKey: {
         allowNull: false
