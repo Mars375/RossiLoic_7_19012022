@@ -47,7 +47,7 @@ module.exports = {
       picture: {
         allowNull: false,
         type: Sequelize.STRING,
-        defaultValue: "http://localhost:3000/pictures/defaultpicture.webp"
+        defaultValue: 'http://localhost:3000/pictures/defaultpicture.webp'
       },
       createdAt: {
         allowNull: false,

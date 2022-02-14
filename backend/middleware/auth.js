@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken')
-const UserModel = require('../models/User')
+const models = require('../models')
 require('dotenv').config()
 
 module.exports.checkUser = (req, res, next) => {
@@ -12,7 +12,7 @@ module.exports.checkUser = (req, res, next) => {
           maxAge: 0
         })
       } else {
-        let user = await UserModel.findOne({
+        let user = await models.User.findOne({
           where: {
             id: decodedToken.id
           },
@@ -58,25 +58,24 @@ module.exports.requireAuth = (req, res, next) => {
 
 module.exports.isUser = async (req, res, next) => {
   try {
-    const user = res.locals.user
-    if (user.isAdmin)
+    if (res.locals.user.isAdmin)
       return next()
-    const userPofil = await UserModel.findOne({
+    const userProfil = await models.User.findOne({
       where: {
-        id: req.params.id
+        id: res.locals.user.id
       },
       attributes: {
         excludes: ['password']
       }
     })
-    if (!userPofil) {
+    if (!userProfil) {
       return res.status(404).json({
         message: 'User not found'
       })
     }
-    if (userPofil.id != user.id) {
+    if (userProfil.id != res.locals.user.id) {
       return res.status(403).json({
-        message: "You are not " + userPofil.username
+        message: "You are not " + userProfil.username
       })
     }
     next()

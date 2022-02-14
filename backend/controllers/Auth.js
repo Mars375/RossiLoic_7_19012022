@@ -37,7 +37,6 @@ module.exports.signup = async (req, res, next) => {
         lastname,
         firstname,
         bio,
-        isAdmin: 0
       })
       res.status(201).json({
         'userId': newUser.id,

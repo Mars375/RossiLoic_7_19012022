@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const userCtrl = require('../controllers/User')
+const userCtrl = require('../controllers/Users')
 const { checkUser, isUser } = require('../middleware/auth')
 
 router.get('/', userCtrl.getAllUsers )

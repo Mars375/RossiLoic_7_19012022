@@ -5,9 +5,13 @@ const bcrypt = require('bcrypt')
 module.exports.getAllUsers = async (req, res) => {
   try {
     const users = await models.User.findAll({
-      attributes: {
-        exclude: ['password']
-      }
+      attributes:[
+          'username',
+          'bio',
+          'firstname',
+          'lastname',
+          'picture'
+        ]
     })
     if (!users.length)
       return res.status(404).json({
@@ -15,7 +19,6 @@ module.exports.getAllUsers = async (req, res) => {
       })
     res.status(200).json(users)
   } catch (error) {
-    console.log(error);
     res.status(500).json({
       error
     })
@@ -25,12 +28,16 @@ module.exports.getAllUsers = async (req, res) => {
 module.exports.getOneUser = async (req, res) => {
   try {
     const user = await models.User.findOne({
+      attributes:[
+        'username',
+        'bio',
+        'firstname',
+        'lastname',
+        'picture'
+      ],
       where: {
         id: req.params.id
       },
-      attributes: {
-        exclude: ['password']
-      }
     })
     if (!user)
       return res.status(404).json({
@@ -38,7 +45,6 @@ module.exports.getOneUser = async (req, res) => {
       })
     res.status(200).json(user)
   } catch (error) {
-    console.log(error);
     res.status(500).json({
       error
     })
@@ -81,7 +87,6 @@ module.exports.updateUser = async (req, res) => {
             password: hash,
           })
         } catch (error) {
-          console.log(error);
           return res.status(403).json({
             error
           })
@@ -92,15 +97,6 @@ module.exports.updateUser = async (req, res) => {
         })
       }
     }
-    // if (bio) {
-    //   await user.update({
-    //     bio: bio
-    //   })
-    // }
-    // if (username)
-    //   await user.update({
-    //     username: username
-    //   })
     user.set ({
       bio: bio || user.bio,
       usename: username || user.username,
@@ -213,7 +209,6 @@ module.exports.unfollow = async (req, res) => {
       message: 'You are now unfollowing ' + userToFollow.username
     })
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       error
     })

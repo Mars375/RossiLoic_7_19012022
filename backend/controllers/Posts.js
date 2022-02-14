@@ -1,59 +1,243 @@
-const PostModel = require('../models/Post')
-const UserModel = require('../models/User')
+const models = require('../models')
 
 module.exports.getOnePost = async (req, res) => {
   try {
-    const post = await PostModel.findONe({ where : { id: req.params.id } })
+    const post = await models.Post.findOne({
+      where: {
+        id: req.params.id
+      },
+      include: [{
+        model: models.User,
+        attributes: ['username']
+      }]
+    })
     if (!post)
-      return res.status(404).json({ message: "Post has not been found" })
-    res.status(200).json({ post })
-  }
-  catch(error) {
-    res.status(500).json({ error })
+      return res.status(404).json({
+        message: "Post not found"
+      })
+    res.status(200).json({
+      post
+    })
+  } catch (error) {
+    res.status(500).json({
+      error
+    })
   }
 }
 
 module.exports.getAllPosts = async (req, res) => {
   try {
-    const posts = await PostModel.findAll()
+    const posts = await models.Post.findAll({
+      include: [{
+        model: models.User,
+        attributes: ['username']
+      }],
+      order: [
+        ['updatedAt', 'DESC']
+      ]
+    })
     if (!posts.length)
       return res.status(404).json({
-      message: 'Post has not been found'
+        message: 'Post not found'
+      })
+    res.status(200).json({
+      posts
     })
-    res.status(200).json({ posts })
-  } 
-  catch (error) {
-    res.status(500).json({ error })
+  } catch (error) {
+    res.status(500).json({
+      error
+    })
   }
 }
 
-module.exports.getTenPost = (req, res) => {
-
+module.exports.getPostOfUser = async (req, res) => {
+  try {
+    const posts = await models.Post.findAll({
+      where: {
+        UserId: req.params.user_id
+      },
+      include: [{
+        model: models.User,
+        attributes: ['username']
+      }]
+    })
+    if (!posts.length)
+      return res.status(404).json({
+        'error': 'Post not found'
+      })
+    res.status(200).json({
+      posts
+    })
+  } catch (error) {
+    res.status(500).json({
+      error
+    })
+  }
 }
 
-module.exports.getAllPostCategory = (req, res) => {
-  
+module.exports.getAllPostByCategory = async (req, res) => {
+  try {
+    const posts = await models.Post.findAll({
+      where: {
+        category: req.params.category
+      },
+      include: [{
+        model: models.User,
+        attributes: ['username']
+      }]
+    })
+    if (!posts.length)
+      return res.status(404).json({
+        'error': 'Post not found'
+      })
+    res.status(200).json({
+      posts
+    })
+  } catch (error) {
+    return res.status(500).json({
+      error
+    })
+  }
 }
 
 module.exports.createPost = async (req, res) => {
-  try {
-    const sauceObject = JSON.parse(req.body.sauce)
-    const sauce = new Sauce({
-      ...sauceObject,
-      imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
+  const {
+    title,
+    content,
+    category
+  } = req.body
+  let attachmentURL
+  if (!title || title.length <= 2 || !content || content.length <= 4)
+    return res.status(400).json({
+      'error': 'invalid parameters'
     })
-  sauce.save()
-    .then(() => res.status(201).json({ message: 'Sauce enregistrée !' }))
-    .catch(error => res.status(400).json({ error }))
-  }
-  catch {
-
+  try {
+    const user = await models.User.findOne({
+      attributes: ['id', 'email', 'username'],
+      where: {
+        id: res.locals.user.id
+      }
+    })
+    if (!user)
+      return res.status(400).json(error)
+    //Récupération du corps du post
+    if (!req.file)
+      attachmentURL == null
+    else
+      attachmentURL = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+    try {
+      const newPost = await models.Post.create({
+        title,
+        content,
+        category,
+        attachment: attachmentURL,
+        UserId: user.id
+      })
+      res.status(201).json(newPost)
+    } catch (error) {
+      return res.status(500).json(error)
+    }
+  } catch (error) {
+    return res.status(500).json(error)
   }
 }
-module.exports.updatePost = (req, res) => {
-  
+
+module.exports.updatePost = async (req, res) => {
+  const {
+    title,
+    content,
+    category
+  } = req.body
+  let attachmentURL
+  if (!title || title.length <= 2 || !content || content.length <= 4)
+    return res.status(400).json({
+      'error': 'invalid parameters'
+    })
+  try {
+    const user = await models.User.findOne({
+      attributes: ['id', 'email', 'username'],
+      where: {
+        id: res.locals.user.id
+      }
+    })
+    if (!user)
+      return res.status(404).json(error)
+  } catch (error) {
+    return res.status(500).json(error)
+  }
+  //Récupération du corps du post
+  if (!req.file)
+    attachmentURL == null
+  else
+    attachmentURL = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+  try {
+    const post = await isCreator(req, res)
+    if(!post)
+      return
+    post.set({
+      title: title || post.title,
+      content: content || post.content,
+      category: category || post.category,
+      attachment: attachmentURL,
+      UserId: post.UserId
+    })
+    try {
+      await post.save()
+      return res.status(200).json({
+        post
+      })
+    } catch (error) {
+      return res.status(500).json({
+        error
+      })
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      error
+    })
+  }
 }
 
-module.exports.deletePost = (req, res) => {
-  
+module.exports.deletePost = async (req, res) => {
+  const post = await isCreator(req, res)
+  if(!post)
+    return
+  try {
+    await post.destroy();
+    res.status(200).json({
+      message: "Successfully deleted !"
+    })
+  } catch (error) {
+    res.status(500).json({
+      error
+    })
+  }
+}
+
+const isCreator = async (req, res) => {
+  try {
+    var postFound = await models.Post.findOne({
+      where: {
+        id: req.params.id
+      },
+      include: [{
+        model: models.User,
+        attributes: ['username']
+      }]
+    })
+    if(!postFound){
+      res.status(404).json({ message: "Post not found" })
+      return false
+    }
+  }
+  catch (error) {
+    res.status(500).json({ error: error.message })
+    return false
+  }
+  if (postFound.UserId !== res.locals.user.id) {
+    res.status(403).json({ message: "You're not the creator !" })
+    return false
+  }
+  return postFound
 }
