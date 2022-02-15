@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const postCtrl = require('../controllers/Posts')
 const likeCtrl = require('../controllers/Likes')
-const { checkUser, isUser } = require('../middleware/auth')
+const { checkUser } = require('../middleware/auth')
 const multer = require('../middleware/multer-config')
 
 router.get('/', postCtrl.getAllPosts)

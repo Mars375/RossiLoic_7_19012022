@@ -33,7 +33,7 @@ module.exports.getAllPosts = async (req, res) => {
         attributes: ['username']
       }],
       order: [
-        ['updatedAt', 'DESC']
+        ['createdAt', 'DESC']
       ]
     })
     if (!posts.length)
@@ -59,7 +59,10 @@ module.exports.getPostOfUser = async (req, res) => {
       include: [{
         model: models.User,
         attributes: ['username']
-      }]
+      }],
+      order: [
+        ['createdAt', 'DESC']
+      ]
     })
     if (!posts.length)
       return res.status(404).json({
@@ -84,7 +87,10 @@ module.exports.getAllPostByCategory = async (req, res) => {
       include: [{
         model: models.User,
         attributes: ['username']
-      }]
+      }],
+      order: [
+        ['createdAt', 'DESC']
+      ]
     })
     if (!posts.length)
       return res.status(404).json({
@@ -235,9 +241,9 @@ const isCreator = async (req, res) => {
     res.status(500).json({ error: error.message })
     return false
   }
-  if (postFound.UserId !== res.locals.user.id) {
-    res.status(403).json({ message: "You're not the creator !" })
-    return false
+  if (postFound.UserId == res.locals.user.id || userIsAdmin.dataValues.isAdmin == true) {
+    return postFound
   }
-  return postFound
+  res.status(403).json({ message: "You're not the creator !" })
+  return false
 }

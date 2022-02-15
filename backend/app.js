@@ -5,6 +5,7 @@ const path = require('path')
 const userRoutes = require('./routes/User')
 const authRoutes = require('./routes/Auth')
 const postRoutes = require('./routes/Posts')
+const commentRoutes = require('./routes/Comments')
 const cookieParser = require('cookie-parser')
 
 const { checkUser, requireAuth } = require('./middleware/auth')
@@ -29,7 +30,7 @@ app.get('/jwtid', checkUser, requireAuth, (req, res) => {
 app.use('/auth', authRoutes)
 app.use('/user', userRoutes)
 app.use('/post', postRoutes)
-// app.use('/comment', commentRoutes)
+app.use('/post', commentRoutes)
 
 
 module.exports = app

@@ -7,6 +7,7 @@ module.exports = (sequelize, DataTypes) => {
   Follow.associate = models => {
     // define association here
     models.Follow.belongsTo(models.User, {
+      onDelete: 'CASCADE',
       as: 'Following',
       foreignKey: {
         allowNull: false

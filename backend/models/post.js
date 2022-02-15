@@ -12,8 +12,17 @@ module.exports = (sequelize, DataTypes) => {
       models.Post.belongsTo(models.User, {
         foreignKey: {
           allowNull: false
-        }
+        },
       })
+      models.Post.hasMany(models.Like, { 
+        foreignKey: 'postId',
+        onDelete: 'cascade',
+        hooks: true 
+      })
+      models.Post.hasMany(models.Comment, {
+				onDelete: "cascade",
+				hooks: true,
+			})
     }
   return Post
 }
