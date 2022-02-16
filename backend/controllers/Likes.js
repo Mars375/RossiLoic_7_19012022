@@ -78,18 +78,24 @@ module.exports.likePost = async (req, res) => {
       }
     }
     try {
-      await postFound.update({
-        likes: ++postFound.likes
+      const count = await models.Like.count({
+        where: {
+          postId: postId
+        }
       })
-      return res.status(200).json({
-        postFound
+      await postFound.update({
+        likes: count
       })
     } catch (error) {
-      res.status(500).json({
+      return res.status(500).json({
         error
       })
     }
+    res.status(200).json({
+      postFound
+    })
   } catch (error) {
+    console.log(error);
     return res.status(500).json({
       error
     })
@@ -104,7 +110,6 @@ module.exports.dislikePost = async (req, res) => {
     return res.status(400).json({
       'error': 'invalid parameters'
     })
-
   try {
     postFound = await models.Post.findOne({
       where: {
@@ -143,14 +148,17 @@ module.exports.dislikePost = async (req, res) => {
         postId: postId
       }
     })
-    if (!userAlreadyLikeFound) 
-      return res.status(404).json({ 'error': 'Post can\'t be dislike without being liked' })
+    if (!userAlreadyLikeFound)
+      return res.status(404).json({
+        'error': 'Post can\'t be dislike without being liked'
+      })
     else {
       if (userAlreadyLikeFound.isLike === LIKED) {
         try {
           await userAlreadyLikeFound.update({
             isLike: DISLIKED
           })
+          await postFound.removeUser(userFound)
         } catch (error) {
           return res.status(500).json({
             error
@@ -162,20 +170,25 @@ module.exports.dislikePost = async (req, res) => {
         })
       }
     }
-    try {
-      await postFound.update({
-        likes: --postFound.likes
-      })
-      return res.status(200).json({
-        postFound
-      })
-    } catch (error) {
-      res.status(500).json({
-        error
-      })
-    }
   } catch (error) {
     return res.status(500).json({
+      error
+    })
+  }
+  try {
+    const count = await models.Like.count({
+      where: {
+        postId: postId
+      }
+    })
+    await postFound.update({
+      likes: count
+    })
+    return res.status(200).json({
+      postFound
+    })
+  } catch (error) {
+    res.status(500).json({
       error
     })
   }

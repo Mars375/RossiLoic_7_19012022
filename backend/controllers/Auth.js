@@ -61,7 +61,6 @@ module.exports.login = async (req, res, next) => {
   } = req.body
   try {
     const user = await models.User.findOne({
-      attributes: ["id", "username", "email"],
       where: {
         email
       }

@@ -8,13 +8,14 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      idUSERS: {
+      followers: {
         allowNull: false,
         type: Sequelize.INTEGER,
         references: {
           model: 'Users',
           key: 'id'
-        }
+        },
+        onDelete: "CASCADE",
       },
       following: {
         type: Sequelize.INTEGER

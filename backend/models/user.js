@@ -16,10 +16,6 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: 'cascade',
         hooks: true
       })
-      models.User.hasMany(models.Follow, {
-        onDelete: 'cascade',
-        hooks: true
-      })
       models.User.hasMany(models.Like, {
         foreignKey: 'userId', 
         onDelete: 'cascade',

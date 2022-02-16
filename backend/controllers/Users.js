@@ -1,17 +1,18 @@
 const models = require('../models')
 const zxcvbn = require('zxcvbn')
 const bcrypt = require('bcrypt')
+const { sequelize, QueryTypes } = require('sequelize')
 
 module.exports.getAllUsers = async (req, res) => {
   try {
     const users = await models.User.findAll({
-      attributes:[
-          'username',
-          'bio',
-          'firstname',
-          'lastname',
-          'picture'
-        ]
+      attributes: [
+        'username',
+        'bio',
+        'firstname',
+        'lastname',
+        'picture'
+      ]
     })
     if (!users.length)
       return res.status(404).json({
@@ -28,7 +29,7 @@ module.exports.getAllUsers = async (req, res) => {
 module.exports.getOneUser = async (req, res) => {
   try {
     const user = await models.User.findOne({
-      attributes:[
+      attributes: [
         'username',
         'bio',
         'firstname',
@@ -97,7 +98,7 @@ module.exports.updateUser = async (req, res) => {
         })
       }
     }
-    user.set ({
+    user.set({
       bio: bio || user.bio,
       usename: username || user.username,
       email: email || user.email,
@@ -117,6 +118,52 @@ module.exports.updateUser = async (req, res) => {
 }
 
 module.exports.deleteUser = async (req, res) => {
+  let postLiked
+  let postFound
+  try {
+    postLiked = await models.Like.findAll({
+      raw: true,
+      where: { 
+        userId: req.params.id
+      },
+      attributes: ['postId']
+    })
+  } catch (error) {
+    return res.status(500).json({
+      error
+    })
+  }
+  if (postLiked) {
+    const ids = []
+    postLiked.forEach(like => ids.push(like.postId))
+    console.log(postLiked);
+    for (const element of ids) {
+      try {
+        postFound = await models.Post.findOne({
+          where: {
+            id: element
+          }
+        })
+        console.log('ele' + element);
+      } catch (error) {
+        return res.status(500).json({
+          error
+        })
+      }
+      try {
+        await postFound.update({
+          where: {
+            id: element
+          },
+          likes: --postFound.likes
+        })
+      } catch (error) {
+        return res.status(500).json({
+          error
+        })
+      }
+    }
+  }
   try {
     const user = await models.User.findOne({
       where: {
@@ -132,6 +179,7 @@ module.exports.deleteUser = async (req, res) => {
       message: "Successfully deleted !"
     })
   } catch (error) {
+    console.log(error);
     res.status(500).json({
       error
     })
@@ -165,7 +213,7 @@ module.exports.follow = async (req, res) => {
         message: 'You already are following ' + userToFollow.username
       })
     await Follow.create({
-      followers: res.locals.user.id,
+      idUSERS: res.locals.user.id,
       following: idToFollow
     })
     res.status(200).json({
