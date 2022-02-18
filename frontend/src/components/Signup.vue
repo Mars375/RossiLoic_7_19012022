@@ -240,7 +240,7 @@ export default {
       };
       try {
         const fetchResponse = await fetch(
-          "http://localhost:3000/api/auth/signup",
+          "http://localhost:3000/auth/signup",
           settings
         );
         setTimeout(async () => {

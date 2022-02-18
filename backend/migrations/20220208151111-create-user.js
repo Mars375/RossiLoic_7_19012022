@@ -29,7 +29,8 @@ module.exports = {
       },
       bio: {
         allowNull: true,
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        defaultValue: 'Description en cours de rédaction'
       },
       isAdmin: {
         allowNull: false,
@@ -48,6 +49,11 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING,
         defaultValue: 'http://localhost:3000/pictures/defaultpicture.webp'
+      },
+      background: {
+        allowNull: false,
+        type: Sequelize.STRING,
+        defaultValue: 'http://localhost:3000/pictures/defaultbackground.webp'
       },
       createdAt: {
         allowNull: false,

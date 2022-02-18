@@ -25,11 +25,10 @@ export default {
 
 .icon
   font-size: 20px
-  font-weight: 400
-  height: 20px
-  line-height: 20px
   vertical-align: middle
-  width: 20px
+
+  &:active
+    color: #FD2D01
 
 button
   text-decoration: none
@@ -47,6 +46,9 @@ a
   -webkit-font-smoothing: antialiased
   -moz-osx-font-smoothing: grayscale
   text-align: center
+  
+  main
+    margin-top: 52px
 
 body
   background-color: #DAE0E6

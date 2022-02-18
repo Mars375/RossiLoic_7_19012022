@@ -1,7 +1,7 @@
 <template>
   <header>
     <a aria-label="Accueil" class="home" href="/">
-      <div id="logo">
+      <h1 id="logo">
         <img
           alt="Logo Groupomania"
           src="../assets/icon-left-font.png"
@@ -12,8 +12,9 @@
           src="../assets/icon.png"
           class="logoMobile"
         />
-      </div>
+      </h1>
     </a>
+    <router-link :to="{ name: 'Home' }"  v-if="logged"><font-awesome-icon class="icon" icon="home" /></router-link>
     <form
       action="javascript:void(0)"
       autocomplete="off"
@@ -22,9 +23,7 @@
       class="searchbar"
     >
       <label class="headerSearchbar" for="header-searchbar">
-        <div>
-          <font-awesome-icon class="search" icon="search" />
-        </div>
+        <font-awesome-icon class="search" icon="search" />
       </label>
       <input type="search" placeholder="Rechercher" />
     </form>
@@ -46,10 +45,11 @@
       <a
         class="login"
         :class="{ active: signup && login }"
-        @click="loggout()"
+        @click="logout()"
         v-if="logged"
         >Deconnexion</a
       >
+      <div class="user" v-if="user">{{ user.username }}</div>
       <a class="menu" @click="ok = !ok" :class="{ active: ok }">
         <font-awesome-icon class="icon" icon="user" />
         <font-awesome-icon class="chevrondown" icon="chevron-down" />
@@ -61,7 +61,7 @@
       v-show="ok"
       v-if="!logged"
     />
-    <MenuLogged v-show="ok" :data="data" @menu="ok = $event" v-if="logged" />
+    <MenuLogged v-show="ok" :user="user" @menu="ok = $event" v-if="logged" />
     <div id="background" @click="signup = !signup" v-show="signup"></div>
     <Signup
       @change="login = $event"
@@ -74,7 +74,7 @@
       :login="login"
       v-show="signup"
       @close="signup = $event"
-      @data="data = $event"
+      @user="user = $event"
     />
   </header>
 </template>
@@ -95,20 +95,33 @@ export default {
   },
   data() {
     return {
-      data: {},
       ok: false,
       signup: false,
       login: false,
     };
   },
   methods: {
-    ...mapActions(["changelogged"]),
-    loggout() {
+    ...mapActions(["changelogged", "getuserinf"]),
+    async logout() {
+      const settings = {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      };
+      try {
+        await fetch("http://localhost:3000/auth/logout", settings);
+        window.location.href = "/";
+      } catch (error) {
+        console.log(error);
+      }
+      this.getuserinf("");
       this.changelogged(false);
     },
   },
   computed: {
-    ...mapState({ logged: "logged" }),
+    ...mapState({ logged: "logged", user: "user" }),
   },
   mounted() {},
 };
@@ -150,7 +163,7 @@ header
   border-radius: 5px
   border: 1px solid
   height: 40px
-  flex-grow: .8
+  flex-grow: .6
   max-width: 700px
 
 input
@@ -213,6 +226,10 @@ input
   transform: rotate(90deg)
   align-self: center
 
+.user
+  display: none
+  font-weight: bold
+
 @media screen and (min-width: 615px)
 
   #nav
@@ -242,6 +259,9 @@ input
     &.active, &:hover
       filter: brightness(120%)
 
+  .user
+    display: inherit
+
 @media screen and (min-width: 1070px)
 
   #logo
@@ -254,5 +274,8 @@ input
     align-self: center
     width: 100%
     height: 52px
+    display: inherit
+
+  .user
     display: inherit
 </style>

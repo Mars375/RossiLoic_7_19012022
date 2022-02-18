@@ -29,9 +29,14 @@ module.exports.getAllPosts = async (req, res) => {
   try {
     const posts = await models.Post.findAll({
       include: [{
-        model: models.User,
-        attributes: ['username']
-      }],
+          model: models.User,
+          attributes: ['username'],
+        },
+        {
+          model: models.Comment,
+          attributes: ['content']
+        }
+      ],
       order: [
         ['createdAt', 'DESC']
       ]
@@ -53,6 +58,7 @@ module.exports.getAllPosts = async (req, res) => {
 module.exports.getPostOfUser = async (req, res) => {
   try {
     const posts = await models.Post.findAll({
+      raw: true,
       where: {
         UserId: req.params.user_id
       },
@@ -178,7 +184,7 @@ module.exports.updatePost = async (req, res) => {
     attachmentURL = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
   try {
     const post = await isCreator(req, res)
-    if(!post)
+    if (!post)
       return
     post.set({
       title: title || post.title,
@@ -207,7 +213,7 @@ module.exports.updatePost = async (req, res) => {
 
 module.exports.deletePost = async (req, res) => {
   const post = await isCreator(req, res)
-  if(!post)
+  if (!post)
     return
   try {
     await post.destroy();
@@ -232,18 +238,23 @@ const isCreator = async (req, res) => {
         attributes: ['username']
       }]
     })
-    if(!postFound){
-      res.status(404).json({ message: "Post not found" })
+    if (!postFound) {
+      res.status(404).json({
+        message: "Post not found"
+      })
       return false
     }
-  }
-  catch (error) {
-    res.status(500).json({ error: error.message })
+  } catch (error) {
+    res.status(500).json({
+      error: error.message
+    })
     return false
   }
   if (postFound.UserId == res.locals.user.id || userIsAdmin.dataValues.isAdmin == true) {
     return postFound
   }
-  res.status(403).json({ message: "You're not the creator !" })
+  res.status(403).json({
+    message: "You're not the creator !"
+  })
   return false
 }

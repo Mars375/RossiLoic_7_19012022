@@ -7,7 +7,8 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    logged: false
+    logged: false,
+    user: {}
   },
   plugins: [createPersistedState({
     storage: {
@@ -19,11 +20,17 @@ export default new Vuex.Store({
   mutations: {
     LOGGED_TRUE(state, value) {
       state.logged = value
-    } 
+    }, 
+    USER_LOGGED(state, value) {
+      state.user = value
+    }
   },
   actions: {
     changelogged(context, value) {
       context.commit('LOGGED_TRUE', value)
+    },
+    getuserinf(context, value) {
+      context.commit('USER_LOGGED', value)
     }
   },
   modules: {

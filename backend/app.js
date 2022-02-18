@@ -20,7 +20,7 @@ app.use((req, res, next) => {
 app.use(express.json())
 
 app.use(cookieParser())
-app.use('/images', express.static(path.join(__dirname, 'pictures')))
+app.use('/pictures', express.static(path.join(__dirname, 'pictures')))
 // jwt
 app.get('/jwtid', checkUser, requireAuth, (req, res) => {
   res.status(200).send(res.locals.user.id.toString())

@@ -1,7 +1,7 @@
 <template>
-  <div class="home">
+  <main class="home">
     <p>Je suis un post</p>
-  </div>
+  </main>
 </template>
 
 <script>

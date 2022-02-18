@@ -8,7 +8,8 @@ module.exports = (sequelize, DataTypes) => {
     isAdmin: DataTypes.BOOLEAN,
     lastname: DataTypes.STRING,
     firstname: DataTypes.STRING,
-    picture: DataTypes.STRING
+    picture: DataTypes.STRING,
+    background: DataTypes.STRING
   })
     User.associate = models => {
       // define association here

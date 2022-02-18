@@ -6,7 +6,7 @@
       :style="{ opacity: isLogged ? 1 : 0 }"
     >
       <p class="ok">
-        {{ data.message }}
+        {{ user.message }}
         <loading-component width="25"></loading-component>
       </p>
     </div>
@@ -16,7 +16,7 @@
       :style="{ opacity: isntLogged ? 1 : 0 }"
     >
       <p class="error">
-        {{ data.message }}
+        {{ user.message }}
       </p>
     </div>
     <form
@@ -89,7 +89,7 @@ export default {
     return {
       mail: "",
       password: "",
-      data: {},
+      user: {},
 
       isLoggingIn: false,
       isntLogged: false,
@@ -105,7 +105,7 @@ export default {
     login: Boolean,
   },
   methods: {
-    ...mapActions(["changelogged"]),
+    ...mapActions(["changelogged", "getuserinf"]),
     showPassword(show) {
       if (show === "show") {
         this.show = !this.show;
@@ -138,22 +138,21 @@ export default {
       };
       try {
         const fetchResponse = await fetch(
-          "http://localhost:3000/api/auth/login",
+          "http://localhost:3000/auth/login",
           settings
         );
         if (fetchResponse.ok) {
           setTimeout(async () => {
             const data = await fetchResponse.json();
-            this.data = data
+            this.user = data
             this.isLoggingIn = false;
             this.isLogged = true;
-            this.$emit("data", this.data);
             setTimeout(() => this.redirect(), 500);
           }, 700);
         } else {
           setTimeout(async () => {
             const data = await fetchResponse.json();
-            this.data = data;
+            this.user = data;
             this.isLoggingIn = false;
             this.isntLogged = true;
             setTimeout(() => this.isntLogged = false, 1250);
@@ -165,6 +164,7 @@ export default {
     },
     redirect() {
       this.$emit("change", false);
+      this.getuserinf(this.user.user)
       this.changelogged(true);
       this.isAlertShow = false;
       this.isLogged = false;

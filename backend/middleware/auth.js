@@ -17,7 +17,7 @@ module.exports.checkUser = (req, res, next) => {
             id: decodedToken.id
           },
           attributes: {
-            excludes: ['password']
+            exclude: ['password']
           }
         })
         if (!user) {
@@ -65,7 +65,7 @@ module.exports.isUser = async (req, res, next) => {
         id: res.locals.user.id
       },
       attributes: {
-        excludes: ['password']
+        exclude: ['password']
       }
     })
     if (!userProfil) {

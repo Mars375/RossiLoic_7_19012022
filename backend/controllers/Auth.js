@@ -80,7 +80,7 @@ module.exports.login = async (req, res, next) => {
       maxAge: 24 * 60 * 60 * 1000 * 2
     })
     res.status(200).json({
-      user: user.id,
+      user: { id: user.id, username: user.username },
       message: "You are now logged in !"
     })
   } catch (error) {

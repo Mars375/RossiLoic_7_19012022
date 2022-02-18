@@ -1,18 +1,18 @@
 const models = require('../models')
 const zxcvbn = require('zxcvbn')
 const bcrypt = require('bcrypt')
-const { sequelize, QueryTypes } = require('sequelize')
 
 module.exports.getAllUsers = async (req, res) => {
   try {
     const users = await models.User.findAll({
-      attributes: [
-        'username',
-        'bio',
-        'firstname',
-        'lastname',
-        'picture'
-      ]
+      attributes: {
+        exclude: [
+          'password',
+          'email',
+          'id',
+          'isAdmin'
+        ]
+      }
     })
     if (!users.length)
       return res.status(404).json({
@@ -29,13 +29,14 @@ module.exports.getAllUsers = async (req, res) => {
 module.exports.getOneUser = async (req, res) => {
   try {
     const user = await models.User.findOne({
-      attributes: [
-        'username',
-        'bio',
-        'firstname',
-        'lastname',
-        'picture'
-      ],
+      attributes: {
+        exclude: [
+          'password',
+          'email',
+          'id',
+          'isAdmin'
+        ]
+      },
       where: {
         id: req.params.id
       },
@@ -62,7 +63,8 @@ module.exports.updateUser = async (req, res) => {
       password,
       bio,
       picture,
-      isAdmin
+      isAdmin,
+      background
     } = req.body
     const user = await models.User.findOne({
       where: {
@@ -104,7 +106,8 @@ module.exports.updateUser = async (req, res) => {
       email: email || user.email,
       lastname: lastname || user.lastname,
       firstname: firstname || user.firstname,
-      picture: picture || user.picture
+      picture: picture || user.picture,
+      background: background || user.background
     })
     await user.save()
     res.status(200).json({
@@ -123,7 +126,7 @@ module.exports.deleteUser = async (req, res) => {
   try {
     postLiked = await models.Like.findAll({
       raw: true,
-      where: { 
+      where: {
         userId: req.params.id
       },
       attributes: ['postId']
