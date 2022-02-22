@@ -8,7 +8,11 @@
         <div class="check"></div>
       </button> -->
     </div>
-    <router-link :to="{ name: 'Profil', params: { user: user.id } }" @click.native="$emit('menu', false)" class="menuButton flex">
+    <router-link
+      :to="{ name: 'Profil', params: { id: user.id } }"
+      @click.native="$emit('menu', false)"
+      class="menuButton flex"
+    >
       <font-awesome-icon class="icon" icon="id-card" />
       <p class="directions">Profil</p>
     </router-link>
@@ -28,13 +32,14 @@ export default {
     return {};
   },
   computed: {
-    ...mapState({ logged: "logged", user:"user" }),
+    ...mapState({ logged: "logged", user: "user" }),
   },
   components: {},
   methods: {
     ...mapActions(["changelogged", "getuserinf"]),
     async logout() {
       const settings = {
+        credentials: "include",
         method: "GET",
         headers: {
           Accept: "application/json",
@@ -53,8 +58,8 @@ export default {
       }
       this.$emit("menu", false);
       this.changelogged(false);
-      this.getuserinf('')
-      window.location.href= '/'
+      this.getuserinf("");
+      window.location.href = "/";
     },
   },
 };

@@ -11,22 +11,32 @@ module.exports = (sequelize, DataTypes) => {
     picture: DataTypes.STRING,
     background: DataTypes.STRING
   })
-    User.associate = models => {
-      // define association here
-      models.User.hasMany(models.Post, {
-        onDelete: 'cascade',
-        hooks: true
-      })
-      models.User.hasMany(models.Like, {
-        foreignKey: 'userId', 
-        onDelete: 'cascade',
-        hooks: true
-      })
-      models.User.hasMany(models.Comment, {
-          foreignKey: 'userId',
-          onDelete: 'cascade',
-          hooks: true
-      })
-    }
+  User.associate = models => {
+    // define association here
+    models.User.hasMany(models.Post, {
+      onDelete: 'cascade',
+      hooks: true
+    })
+    models.User.hasMany(models.Like, {
+      foreignKey: 'userId',
+      onDelete: 'cascade',
+      hooks: true
+    })
+    models.User.hasMany(models.Comment, {
+      foreignKey: 'userId',
+      onDelete: 'cascade',
+      hooks: true
+    })
+    models.User.hasMany(models.Follow, {
+      foreignKey: 'personFollowing',
+      onDelete: 'cascade',
+      hooks: true
+    })
+    models.User.hasMany(models.Follow, {
+      foreignKey: 'personBeingFollowed',
+      onDelete: 'cascade',
+      hooks: true
+    })
+  }
   return User;
 }

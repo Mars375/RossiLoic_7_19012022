@@ -186,6 +186,8 @@ export default {
     },
     regexppassword() {
       const passwordSecure = zxcvbn(this.password, [this.firstname, this.lastname, this.mail]);
+      if (!this.password)
+        return ""
       if (passwordSecure.score < 2 || this.password.toLowerCase().includes('groupomania'))
       {
         return "Mot de passe trop faible"

@@ -104,6 +104,7 @@ export default {
     ...mapActions(["changelogged", "getuserinf"]),
     async logout() {
       const settings = {
+        credentials: 'include',
         method: "GET",
         headers: {
           Accept: "application/json",
@@ -157,6 +158,7 @@ header
 
 #logo
   width: 60px
+  height: 52px
 
 .searchbar
   display: flex

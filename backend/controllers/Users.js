@@ -5,13 +5,19 @@ const bcrypt = require('bcrypt')
 module.exports.getAllUsers = async (req, res) => {
   try {
     const users = await models.User.findAll({
+      include: [{
+        model: models.Follow,
+        attributes: ['personFollowing', 'personBeingFollowed']
+      }],
+      order: [
+        ['firstname', 'ASC']
+      ],
       attributes: {
         exclude: [
           'password',
           'email',
-          'id',
           'isAdmin'
-        ]
+        ],
       }
     })
     if (!users.length)
@@ -20,6 +26,7 @@ module.exports.getAllUsers = async (req, res) => {
       })
     res.status(200).json(users)
   } catch (error) {
+    console.log(error);
     res.status(500).json({
       error
     })
@@ -29,16 +36,20 @@ module.exports.getAllUsers = async (req, res) => {
 module.exports.getOneUser = async (req, res) => {
   try {
     const user = await models.User.findOne({
+      where: {
+        id: req.params.id
+      },
+      include: [{
+        model: models.Follow,
+        attributes: ['personFollowing', 'personBeingFollowed']
+      }],
       attributes: {
         exclude: [
           'password',
           'email',
           'id',
           'isAdmin'
-        ]
-      },
-      where: {
-        id: req.params.id
+        ],
       },
     })
     if (!user)
@@ -47,6 +58,7 @@ module.exports.getOneUser = async (req, res) => {
       })
     res.status(200).json(user)
   } catch (error) {
+    console.log(error);
     res.status(500).json({
       error
     })
@@ -199,8 +211,8 @@ module.exports.follow = async (req, res) => {
     })
     const isFollowing = await models.Follow.findOne({
       where: {
-        following: idToFollow,
-        followers: res.locals.user.id
+        personBeingFollowed: idToFollow,
+        personFollowing: res.locals.user.id
       }
     })
     if (!userToFollow)
@@ -215,14 +227,15 @@ module.exports.follow = async (req, res) => {
       return res.status(403).json({
         message: 'You already are following ' + userToFollow.username
       })
-    await Follow.create({
-      idUSERS: res.locals.user.id,
-      following: idToFollow
+    await models.Follow.create({
+      personBeingFollowed: idToFollow,
+      personFollowing: res.locals.user.id
     })
     res.status(200).json({
       message: 'You are now following ' + userToFollow.username
     })
   } catch (error) {
+    console.log(error);
     return res.status(500).json({
       error
     })
@@ -239,8 +252,8 @@ module.exports.unfollow = async (req, res) => {
     })
     const isFollowing = await models.Follow.findOne({
       where: {
-        following: idToFollow,
-        followers: res.locals.user.id
+        personBeingFollowed: idToFollow,
+        personFollowing: res.locals.user.id
       }
     })
     if (!userToFollow)
@@ -264,4 +277,39 @@ module.exports.unfollow = async (req, res) => {
       error
     })
   }
+}
+
+module.exports.getFollow = async (req, res) => {
+  let userFollowing
+  try {
+    userFollowing = await models.Follow.findAll({
+      where: {
+        personFollowing: req.params.id
+      }
+    })
+    res.status(200)
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      error
+    })
+  }
+  if (!userFollowing)
+    return res.status(404).json({
+      'message': 'User not found'
+    })
+  try {
+    userFollower = await models.Follow.findAll({
+      where: {
+        personBeingFollowed: req.params.id
+      }
+    })
+    res.status(200).json({ userFollowing, userFollower })
+  } catch (error) {
+    return res.status(500).json({
+      error
+    })
+  }
+  if (!userFollower)
+    return res.status(404).json({ 'message': 'User not found' })
 }

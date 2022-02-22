@@ -1,7 +1,9 @@
 <template>
   <div id="app">
     <Header />
-    <router-view />
+    <transition name="fade" mode="out-in">
+    <router-view></router-view>
+    </transition>
   </div>
 </template>
 
@@ -46,7 +48,7 @@ a
   -webkit-font-smoothing: antialiased
   -moz-osx-font-smoothing: grayscale
   text-align: center
-  
+
   main
     margin-top: 52px
 
@@ -90,4 +92,12 @@ table
 input
     -webkit-appearance: none
     border-radius: 0
+
+.fade-enter-active,
+.fade-leave-active
+  transition: all .3s ease
+
+.fade-enter,
+.fade-leave-active
+  opacity: 0
 </style>

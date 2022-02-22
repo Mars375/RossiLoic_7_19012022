@@ -9,6 +9,10 @@ module.exports.getOnePost = async (req, res) => {
       include: [{
         model: models.User,
         attributes: ['username']
+      },
+      {
+        model: models.Comment,
+        attributes: ['content']
       }]
     })
     if (!post)
@@ -65,6 +69,10 @@ module.exports.getPostOfUser = async (req, res) => {
       include: [{
         model: models.User,
         attributes: ['username']
+      },
+      {
+        model: models.Comment,
+        attributes: ['content']
       }],
       order: [
         ['createdAt', 'DESC']
@@ -93,6 +101,10 @@ module.exports.getAllPostByCategory = async (req, res) => {
       include: [{
         model: models.User,
         attributes: ['username']
+      },
+      {
+        model: models.Comment,
+        attributes: ['content']
       }],
       order: [
         ['createdAt', 'DESC']

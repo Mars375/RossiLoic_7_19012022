@@ -126,6 +126,7 @@ export default {
     async submit() {
       this.isLoggingIn = true;
       const settings = {
+        credentials: 'include',
         method: "POST",
         headers: {
           Accept: "application/json",

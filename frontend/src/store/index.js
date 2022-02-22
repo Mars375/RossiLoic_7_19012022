@@ -13,7 +13,7 @@ export default new Vuex.Store({
   plugins: [createPersistedState({
     storage: {
       getItem: key => Cookies.get(key),
-      setItem: (key, value) => Cookies.set(key, value, { expires: 1, secure: true }),
+      setItem: (key, value) => Cookies.set(key, value, { expires: 2, secure: true }),
       removeItem: key => Cookies.remove(key)
     }
   })],
