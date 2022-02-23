@@ -34,13 +34,17 @@
           </div>
         </router-link>
         <button
-          v-if="isFollow(follower.id)"
+          v-if="isFollow(follower.id) && isNotHimself(follower.id)"
           @click="unfollow(follower.id, $event)"
           class="unfollowButton"
         >
           Unfollow
         </button>
-        <button v-else @click="follow(follower.id)" class="followButton">
+        <button
+          v-else-if="isNotHimself(follower.id)"
+          @click="follow(follower.id)"
+          class="followButton"
+        >
           Follow
         </button>
       </article>
@@ -70,6 +74,10 @@ export default {
     },
   },
   methods: {
+    isNotHimself(id) {
+      if (id != this.user.id) return true;
+      return false;
+    },
     isFollow(id) {
       return this.follows.userFollowing.some((f) => {
         return id === f.personBeingFollowed;

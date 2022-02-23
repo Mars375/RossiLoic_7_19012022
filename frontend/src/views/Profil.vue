@@ -5,14 +5,14 @@
       <img :src="profil.background" class="background" />
       <img :src="profil.picture" class="pfp" />
       <button
-        v-if="isFollow($route.params.id)"
+        v-if="isFollow($route.params.id) && isNotHimself($route.params.id)"
         @click="unfollow($route.params.id, $event)"
         class="unfollowButton profilButton"
       >
         Unfollow
       </button>
       <button
-        v-else-if="!isHimself($route.params.id)"
+        v-else-if="isNotHimself($route.params.id)"
         @click="follow($route.params.id)"
         class="profilButton followButton"
       >
@@ -58,8 +58,8 @@ export default {
     ...mapState({ user: "user" }),
   },
   methods: {
-    isHimself(id) {
-      if (id == this.user.id) return true;
+    isNotHimself(id) {
+      if (id != this.user.id) return true;
       return false;
     },
     isFollow(id) {
