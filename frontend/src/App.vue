@@ -1,9 +1,9 @@
 <template>
   <div id="app">
     <Header />
-    <transition name="fade" mode="out-in">
-    <router-view></router-view>
-    </transition>
+    <!-- <transition name="dropdown" mode="out-in"> -->
+      <router-view></router-view>
+    <!-- </transition> -->
   </div>
 </template>
 
@@ -93,11 +93,12 @@ input
     -webkit-appearance: none
     border-radius: 0
 
-.fade-enter-active,
-.fade-leave-active
-  transition: all .3s ease
+.dropdown-enter-active,
+.dropdown-leave-active
+  transition: all 0.2s
 
-.fade-enter,
-.fade-leave-active
+.dropdown-enter,
+.dropdown-leave-active
   opacity: 0
+  transform: translateY(-5px)
 </style>

@@ -25,18 +25,18 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapState, mapMutations } from "vuex";
 
 export default {
   data() {
     return {};
   },
   computed: {
-    ...mapState({ logged: "logged", user: "user" }),
+    ...mapState({ user: "user" }),
   },
   components: {},
   methods: {
-    ...mapActions(["changelogged", "getuserinf"]),
+    ...mapMutations(["setUser", "setToken"]),
     async logout() {
       const settings = {
         credentials: "include",
@@ -47,18 +47,14 @@ export default {
         },
       };
       try {
-        const fetchResponse = await fetch(
-          "http://localhost:3000/auth/logout",
-          settings
-        );
-        const data = await fetchResponse.json();
-        console.log(data);
+        await fetch(`${process.env.VUE_APP_API_URL}/auth/logout`, settings);
       } catch (error) {
         console.log(error);
       }
       this.$emit("menu", false);
-      this.changelogged(false);
-      this.getuserinf("");
+      sessionStorage.clear();
+      this.setToken(null);
+      this.setUser(null);
       window.location.href = "/";
     },
   },

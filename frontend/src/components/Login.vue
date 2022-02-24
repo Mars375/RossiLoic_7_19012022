@@ -5,18 +5,18 @@
       role="alert"
       :style="{ opacity: isLogged ? 1 : 0 }"
     >
-      <p class="ok">
-        {{ user.message }}
+      <p class="ok" v-if="isLogged">
+        {{ data.message }}
         <loading-component width="25"></loading-component>
       </p>
     </div>
-        <div
+    <div
       class="alert alert-primary"
       role="alert"
       :style="{ opacity: isntLogged ? 1 : 0 }"
     >
-      <p class="error">
-        {{ user.message }}
+      <p class="error" v-if="isntLogged">
+        {{ data.message }}
       </p>
     </div>
     <form
@@ -73,13 +73,14 @@
           ><span>S'inscrire</span></a
         >
       </p>
+      {{ error }}
     </form>
   </div>
 </template>
 
 <script>
 import LoadingComponent from "../components/LoadingComponent.vue";
-import { mapState, mapActions } from "vuex";
+import { mapState, mapMutations } from "vuex";
 
 export default {
   components: {
@@ -89,23 +90,24 @@ export default {
     return {
       mail: "",
       password: "",
-      user: {},
 
       isLoggingIn: false,
       isntLogged: false,
       isLogged: false,
       typepassword: "password",
       show: true,
+      error: "",
+      data: {}
     };
   },
   computed: {
-    ...mapState({ logged: "logged" }),
+    ...mapState({user: "user"})
   },
   props: {
     login: Boolean,
   },
   methods: {
-    ...mapActions(["changelogged", "getuserinf"]),
+    ...mapMutations(["setUser", "setToken"]),
     showPassword(show) {
       if (show === "show") {
         this.show = !this.show;
@@ -126,7 +128,7 @@ export default {
     async submit() {
       this.isLoggingIn = true;
       const settings = {
-        credentials: 'include',
+        credentials: "include",
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -139,34 +141,33 @@ export default {
       };
       try {
         const fetchResponse = await fetch(
-          "http://localhost:3000/auth/login",
+          `${process.env.VUE_APP_API_URL}/auth/login`,
           settings
         );
         if (fetchResponse.ok) {
           setTimeout(async () => {
-            const data = await fetchResponse.json();
-            this.user = data
+            this.data = await fetchResponse.json();
+            this.setUser(this.data.user);
+            this.setToken(document.cookie.split(';'))
             this.isLoggingIn = false;
             this.isLogged = true;
             setTimeout(() => this.redirect(), 500);
           }, 700);
         } else {
           setTimeout(async () => {
-            const data = await fetchResponse.json();
-            this.user = data;
+            const { user } = await fetchResponse.json();
+            this.setUser(user);
             this.isLoggingIn = false;
             this.isntLogged = true;
-            setTimeout(() => this.isntLogged = false, 1250);
+            setTimeout(() => (this.isntLogged = false), 1250);
           }, 700);
         }
-      } catch {
-        return;
+      } catch (error) {
+        this.error = error;
       }
     },
     redirect() {
       this.$emit("change", false);
-      this.getuserinf(this.user.user)
-      this.changelogged(true);
       this.isAlertShow = false;
       this.isLogged = false;
       this.$emit("close", false);
@@ -194,7 +195,7 @@ h2
   -webkit-transform-style: preserve-3d
   transform-style: preserve-3d
   z-index: 0
-  width: 99%
+  width: 95%
   max-width: 400px
 
   &.rotated
@@ -331,8 +332,4 @@ input[type="text"], input[type="password"], input[type="email"]
     background-color: red
     justify-content: space-around
     height: 30px
-
-@media screen and (max-width: 768px)
-  #login
-    width: 99%
 </style>

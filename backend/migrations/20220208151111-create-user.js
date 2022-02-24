@@ -48,12 +48,12 @@ module.exports = {
       picture: {
         allowNull: false,
         type: Sequelize.STRING,
-        defaultValue: 'http://localhost:3000/pictures/defaultpicture.webp'
+        defaultValue: 'http://192.168.1.3:3000/pictures/defaultpicture.webp'
       },
       background: {
         allowNull: false,
         type: Sequelize.STRING,
-        defaultValue: 'http://localhost:3000/pictures/defaultbackground.webp'
+        defaultValue: 'http://192.168.1.3:3000/pictures/defaultbackground.webp'
       },
       createdAt: {
         allowNull: false,

@@ -2,7 +2,8 @@
   <main class="flex">
     <!-- <div class="magnifier" v-if="!loaded"></div> -->
     <section class="flex profilUser" v-if="loaded">
-      <img :src="profil.background" class="background" />
+      <img :src="profil.background" class="backgroundImg" />
+      <DropAnImage v-if="isLoggedIn" />
       <img :src="profil.picture" class="pfp" />
       <button
         v-if="isFollow($route.params.id) && isNotHimself($route.params.id)"
@@ -49,31 +50,81 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
+import DropAnImage from "../components/DropAnImage.vue";
+import { mixin as clickaway } from "vue-clickaway";
 
 export default {
+  mixins: [clickaway],
+  data() {
+    return {
+      popup: false,
+      profil: {},
+      posts: {},
+      follows: {},
+      filterUser: {},
+      selectedFile: null,
+      followProfil: {
+        userFollower: [],
+        userFollowing: [],
+      },
+      settings: {
+        method: "PATCH",
+        credentials: "include",
+      },
+      loaded: false,
+    };
+  },
   name: "Profil",
-  components: {},
+  components: {
+    DropAnImage,
+  },
   computed: {
     ...mapState({ user: "user" }),
+    ...mapGetters(["isLoggedIn"]),
   },
   methods: {
+    awayUploadImg() {
+      this.uploadBg = false;
+    },
+    async onUpload() {
+      console.log(this.selectedFile);
+      const foundData = new FormData();
+      foundData.append("image", this.selectedFile, this.selectedFile.name);
+      console.log(foundData);
+      // try {
+      //   const params = {
+      //     method: "PUT",
+      //     credentials: "include",
+      //     headers: {
+      //       Accept: "application/json",
+      //       "Content-Type": "application/json",
+      //     },
+      //     body: JSON.stringify ({
+
+      //     })
+      //   };
+      // await fetch(`http://localhost:3000/user/${this.user.id}`, params);
+      // } catch (error) {
+      //   console.log(error);
+      // }
+    },
     isNotHimself(id) {
-      if (id != this.user.id) return true;
+      if (this.isLoggedIn) if (id != this.user.id) return true;
       return false;
     },
     isFollow(id) {
-      return this.follows.userFollowing.some((f) => {
-        return id == f.personBeingFollowed;
-      });
+      if (this.isLoggedIn)
+        return this.follows.userFollowing.some((f) => {
+          return id == f.personBeingFollowed;
+        });
     },
     async follow(id) {
-      const settings = {
-        method: "PATCH",
-        credentials: "include",
-      };
       try {
-        await fetch(`http://localhost:3000/user/follow/${id}`, settings);
+        await fetch(
+          `${process.env.VUE_APP_API_URL}/user/follow/${id}`,
+          this.settings
+        );
         this.follows.userFollowing.push({
           personBeingFollowed: id,
           personFollowing: this.user.id,
@@ -83,12 +134,11 @@ export default {
       }
     },
     async unfollow(id, event) {
-      const settings = {
-        method: "PATCH",
-        credentials: "include",
-      };
       try {
-        await fetch(`http://localhost:3000/user/unfollow/${id}`, settings);
+        await fetch(
+          `${process.env.VUE_APP_API_URL}/user/unfollow/${id}`,
+          this.settings
+        );
         this.follows.userFollowing.splice(
           this.follows.userFollowing.indexOf(event),
           1
@@ -100,7 +150,7 @@ export default {
     async initData() {
       try {
         const response = await fetch(
-          `http://localhost:3000/user/${this.$route.params.id}`
+          `${process.env.VUE_APP_API_URL}/user/${this.$route.params.id}`
         );
         this.profil = await response.json();
         this.profil.createdAt = new Date(this.profil.createdAt);
@@ -109,7 +159,7 @@ export default {
       }
       try {
         const response = await fetch(
-          `http://localhost:3000/post/user/${this.$route.params.id}`
+          `${process.env.VUE_APP_API_URL}/post/user/${this.$route.params.id}`
         );
         this.posts = await response.json();
         this.posts = this.posts.posts;
@@ -118,7 +168,7 @@ export default {
       }
       try {
         const response = await fetch(
-          `http://localhost:3000/user/follow/${this.$route.params.id}`
+          `${process.env.VUE_APP_API_URL}/user/follow/${this.$route.params.id}`
         );
         this.followProfil = await response.json();
         this.loaded = true;
@@ -127,27 +177,13 @@ export default {
       }
     },
   },
-  data() {
-    return {
-      popup: false,
-      profil: {},
-      posts: {},
-      follows: {},
-      filterUser: {},
-      followProfil: {
-        userFollower: [],
-        userFollowing: [],
-      },
-      loaded: false,
-    };
-  },
   async created() {
     this.initData();
 
     this.$watch(() => this.$route.params, this.initData);
     try {
       const response = await fetch(
-        `http://localhost:3000/user/follow/${this.user.id}`
+        `${process.env.VUE_APP_API_URL}/user/follow/${this.$route.params.id}`
       );
       this.follows = await response.json();
     } catch (error) {
@@ -162,53 +198,63 @@ main
   display: flex
   flex-direction: column
 
-.magnifier
-  top: 40%
-  right: 45%
-  transform: translate(-50%, -50%)
-  width: 50px
-  height: 50px
-  box-shadow: 0px 0px 0px 1px #fff
-  border-radius: 50%
-  position: absolute
-  margin: auto
-  -webkit-animation: magnify 1s linear infinite alternate
-  -moz-animation: magnify 1s linear infinite alternate
-  animation: magnify 1s linear infinite alternate
+// .magnifier
+//   top: 40%
+//   right: 45%
+//   transform: translate(-50%, -50%)
+//   width: 50px
+//   height: 50px
+//   box-shadow: 0px 0px 0px 1px #fff
+//   border-radius: 50%
+//   position: absolute
+//   margin: auto
+//   -webkit-animation: magnify 1s linear infinite alternate
+//   -moz-animation: magnify 1s linear infinite alternate
+//   animation: magnify 1s linear infinite alternate
 
-  &:before
-    content: "Profil"
-    font-size: 16px
-    left: 6px
-    top: 17px
+//   &:before
+//     content: "Profil"
+//     font-size: 16px
+//     left: 6px
+//     top: 17px
 
-  &:after
-    width: 2px
-    height: 25px
-    background-color: #fff
-    bottom: -15px
-    left: 51px
-    border-radius: 2px
-    -webkit-transform: rotate(-45deg)
-    -moz-transform: rotate(-45deg)
-    transform: rotate(-45deg)
-    position: absolute
-    content: ""
+//   &:after
+//     width: 2px
+//     height: 25px
+//     background-color: #fff
+//     bottom: -15px
+//     left: 51px
+//     border-radius: 2px
+//     -webkit-transform: rotate(-45deg)
+//     -moz-transform: rotate(-45deg)
+//     transform: rotate(-45deg)
+//     position: absolute
+//     content: ""
 
-  &:after, &:before
-    position: absolute
+//   &:after, &:before
+//     position: absolute
 
-@keyframes magnify
-  0%
-    transform: scale(1)
-  100%
-    transform: scale(1.3)
+// @keyframes magnify
+//   0%
+//     transform: scale(1)
+//   100%
+//     transform: scale(1.3)
 
 .profilUser
   flex-direction: column
   padding-bottom: 20px
   width: 100%
   background-color: rgb(255, 215, 215)
+
+  > div
+    background-color: #DAE0E6
+    width: 40px
+    height: 35px
+    border-radius: 15px
+    cursor: pointer
+    position: absolute
+    top: 210px
+    left: 25px
 
 p
   margin-top: 1px
@@ -222,7 +268,7 @@ p
   align-self: center
   margin-top: -50px
 
-.background
+.backgroundImg
   object-fit: cover
   width: 100%
   height: 200px

@@ -19,13 +19,15 @@ import {
   faIdCard,
   faHome,
   faCalendarAlt,
-  faArrowLeft
+  faArrowLeft,
+  faCameraRetro,
+  faCross
 } from '@fortawesome/free-solid-svg-icons'
 import {
   FontAwesomeIcon
 } from '@fortawesome/vue-fontawesome'
 
-library.add(faUser, faChevronDown, faSearch, faMoon, faSignInAlt, faArrowRight, faEye, faEyeSlash, faTimes, faBars, faIdCard, faHome, faCalendarAlt, faArrowLeft)
+library.add(faUser, faChevronDown, faSearch, faMoon, faSignInAlt, faArrowRight, faEye, faEyeSlash, faTimes, faBars, faIdCard, faHome, faCalendarAlt, faArrowLeft, faCameraRetro, faCross)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 

@@ -242,7 +242,7 @@ export default {
       };
       try {
         const fetchResponse = await fetch(
-          "http://localhost:3000/auth/signup",
+          `${process.env.VUE_APP_API_URL}/auth/signup`,
           settings
         );
         setTimeout(async () => {
@@ -281,6 +281,8 @@ h2
   -webkit-transform-style: preserve-3d
   transform-style: preserve-3d
   z-index: 1
+  width: 95%
+  max-width: 400px
 
 form
   user-select: none
@@ -288,7 +290,6 @@ form
   background-color: white
   border-radius: 25px
   box-sizing: border-box
-  width: 400px
   padding: 10px 0
   -webkit-transition: all 0.5s ease-in-out
   -moz-transition: all 0.5s ease-in-out

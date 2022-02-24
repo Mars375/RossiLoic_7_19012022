@@ -14,7 +14,9 @@
         />
       </h1>
     </a>
-    <router-link :to="{ name: 'Home' }"  v-if="logged"><font-awesome-icon class="icon" icon="home" /></router-link>
+    <router-link :to="{ name: 'Home' }" v-if="isLoggedIn"
+      ><font-awesome-icon class="icon" icon="home"
+    /></router-link>
     <form
       action="javascript:void(0)"
       autocomplete="off"
@@ -32,37 +34,51 @@
         class="signup"
         :class="{ active: signup && !login }"
         @click="(signup = !signup) && (login = false)"
-        v-if="!logged"
+        v-if="!isLoggedIn"
         >S'inscrire</a
       >
       <a
         class="login"
         :class="{ active: signup && login }"
         @click="(login = true) && (signup = true)"
-        v-if="!logged"
+        v-if="!isLoggedIn"
         >Se connecter</a
       >
       <a
         class="login"
         :class="{ active: signup && login }"
         @click="logout()"
-        v-if="logged"
+        v-if="isLoggedIn"
         >Deconnexion</a
       >
       <div class="user" v-if="user">{{ user.username }}</div>
-      <a class="menu" @click="ok = !ok" :class="{ active: ok }">
+      <a
+        class="menu"
+        v-on-clickaway="awayDropdown"
+        @click="dropdown = !dropdown"
+        :class="{ active: dropdown }"
+      >
         <font-awesome-icon class="icon" icon="user" />
         <font-awesome-icon class="chevrondown" icon="chevron-down" />
       </a>
     </div>
-    <Menu
-      @change="signup = $event"
-      @menu="ok = $event"
-      v-show="ok"
-      v-if="!logged"
-    />
-    <MenuLogged v-show="ok" :user="user" @menu="ok = $event" v-if="logged" />
-    <div id="background" @click="signup = !signup" v-show="signup"></div>
+    <transition name="dropdown" appear>
+      <Menu
+        @change="signup = $event"
+        @menu="dropdown = $event"
+        v-show="dropdown"
+        v-if="!isLoggedIn"
+      />
+    </transition>
+    <transition name="dropdown" appear>
+      <MenuLogged
+        v-show="dropdown"
+        :user="user"
+        @menu="dropdown = $event"
+        v-if="isLoggedIn"
+      />
+    </transition>
+    <div id="background" @click="signup = false" v-show="signup"></div>
     <Signup
       @change="login = $event"
       @close="signup = $event"
@@ -80,13 +96,16 @@
 </template>
 
 <script>
+import { mixin as clickaway } from "vue-clickaway";
 import Signup from "@/components/Signup.vue";
 import Login from "@/components/Login.vue";
 import Menu from "@/components/Menu.vue";
 import MenuLogged from "@/components/MenuLogged.vue";
-import { mapState, mapActions } from "vuex";
+import { mapState, mapMutations, mapGetters } from "vuex";
 
 export default {
+  name: "Header",
+  mixins: [clickaway],
   components: {
     Signup,
     Login,
@@ -95,16 +114,22 @@ export default {
   },
   data() {
     return {
-      ok: false,
+      dropdown: false,
       signup: false,
       login: false,
     };
   },
   methods: {
-    ...mapActions(["changelogged", "getuserinf"]),
+    ...mapMutations(["setUser", "setToken"]),
+    awayDropdown() {
+      this.dropdown = false;
+    },
+    awayLog() {
+      this.signup = false;
+    },
     async logout() {
       const settings = {
-        credentials: 'include',
+        credentials: "include",
         method: "GET",
         headers: {
           Accept: "application/json",
@@ -112,17 +137,19 @@ export default {
         },
       };
       try {
-        await fetch("http://localhost:3000/auth/logout", settings);
-        window.location.href = "/";
+        await fetch(`${process.env.VUE_APP_API_URL}/auth/logout`, settings);
       } catch (error) {
         console.log(error);
       }
-      this.getuserinf("");
-      this.changelogged(false);
+      sessionStorage.clear();
+      this.setToken(null);
+      this.setUser(null);
+      window.location.href = "/";
     },
   },
   computed: {
-    ...mapState({ logged: "logged", user: "user" }),
+    ...mapState({ user: "user" }),
+    ...mapGetters(["isLoggedIn"]),
   },
   mounted() {},
 };
@@ -157,7 +184,6 @@ header
   height: 52px
 
 #logo
-  width: 60px
   height: 52px
 
 .searchbar
@@ -190,6 +216,7 @@ input
   align-self: center
   width: 100%
   height: 52px
+  object-fit: contain
 
 .home
   height: 52px
@@ -216,12 +243,6 @@ input
 
 .signup, .login
   display: none
-
-.fade-enter-active, .fade-leave-active
-  transition: opacity .5s
-
-.fade-enter, .fade-leave-to
-  opacity: 0
 
 .chevrondown
   transition-duration: .5s

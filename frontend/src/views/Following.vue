@@ -89,7 +89,7 @@ export default {
         credentials: "include",
       };
       try {
-        await fetch(`http://localhost:3000/user/follow/${id}`, settings);
+        await fetch(`${process.env.VUE_APP_API_URL}/user/follow/${id}`, settings);
         this.follows.userFollowing.push({
           personBeingFollowed: id,
           personFollowing: this.user.id,
@@ -105,7 +105,7 @@ export default {
           credentials: "include",
         };
         try {
-          await fetch(`http://localhost:3000/user/unfollow/${id}`, settings);
+          await fetch(`${process.env.VUE_APP_API_URL}/user/unfollow/${id}`, settings);
           this.follows.userFollowing.splice(
             this.follows.userFollowing.indexOf(event),
             1
@@ -132,14 +132,14 @@ export default {
   async created() {
     try {
       const response = await fetch(
-        `http://localhost:3000/user/follow/${this.$route.params.id}`
+        `${process.env.VUE_APP_API_URL}/user/follow/${this.$route.params.id}`
       );
       this.follows = await response.json();
     } catch (error) {
       console.log(error);
     }
     try {
-      const response = await fetch(`http://localhost:3000/user`);
+      const response = await fetch(`${process.env.VUE_APP_API_URL}/user`);
       this.users = await response.json();
       this.filterUser = this.users.filter((el) => {
         return this.follows.userFollowing.some((f) => {
@@ -152,3 +152,98 @@ export default {
   },
 };
 </script>
+
+<style lang="sass" scoped>
+.home > div
+  padding: 10px
+  align-items: center
+  > div
+    margin-left: 60px
+    >h2
+      font-weight: bold
+    >p
+      font-size: 14px
+
+nav
+  border-bottom: 1px solid lightgreya
+
+  .router-link-exact-active .title
+    background-color: rgb(255, 215, 215)
+
+.following, .follower
+  width: 50%
+
+.title
+  padding: 20px
+  background-color: white
+  font-weight: bold
+  border-radius: 20px 20px 0 0
+  margin-right: 10px
+  width: 100%
+  border-bottom: 1px solid rgb(255, 215, 215)
+
+  &:hover
+    background-color: rgb(255, 215, 215)
+
+.followList
+  overflow: hidden
+  min-height: 81vh
+  background-color: white
+  row-gap: 20px
+  justify-content: space-between
+  flex-wrap: wrap
+  align-content: flex-start
+  padding: 20px
+
+  > article
+    height: 100%
+    justify-content: space-between
+    align-items: center
+
+    > a
+      align-content: flex-start
+      max-width: fit-content
+
+      > img
+        width: 75px
+        height: 75px
+
+      > div
+        margin-left: 10px
+
+        > h2
+          margin-top: 23px
+          font-weight: bold
+
+        > p
+          font-size: 12px
+          text-align: start
+          color: grey
+
+.unfollowButton
+  border: 1px solid #FD2D01
+  background-color: white
+  color: #fd2d01
+  padding: 8px
+  border-radius: 15px
+  cursor: pointer
+  height: 30px
+  width: 80px
+  font-weight: bold
+
+.followButton
+  border: 1px solid #FD2D01
+  background-color: #fd2d01
+  color: white
+  padding: 8px
+  border-radius: 15px
+  cursor: pointer
+  height: 30px
+  width: 80px
+  font-weight: bold
+
+.unfollowing
+  transition-duration : 500ms
+  margin-top: -75px
+  opacity: 0
+</style>

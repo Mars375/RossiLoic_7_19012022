@@ -8,10 +8,16 @@ const postRoutes = require('./routes/Posts')
 const commentRoutes = require('./routes/Comments')
 const cookieParser = require('cookie-parser')
 
-const { checkUser, requireAuth } = require('./middleware/auth')
+const {
+  checkUser,
+  requireAuth
+} = require('./middleware/auth')
 
 app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080')
+  const allowedOrigins = ['http://192.168.1.3:8080', 'http://localhost:8080', 'http://192.168.1.3:8081'];
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin))
+    res.setHeader('Access-Control-Allow-Origin', origin)
   res.setHeader('Access-Control-Allow-Credentials', 'true')
   res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization')
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS')

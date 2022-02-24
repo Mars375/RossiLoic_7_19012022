@@ -1,38 +1,27 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import createPersistedState from 'vuex-persistedstate';
-import Cookies from 'js-cookie';
+import createPersistedState from 'vuex-persistedstate'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
+  plugins: [createPersistedState({ storage: window.sessionStorage })],
   state: {
-    logged: false,
-    user: {}
+    user: null,
+    token: null,
   },
-  plugins: [createPersistedState({
-    storage: {
-      getItem: key => Cookies.get(key),
-      setItem: (key, value) => Cookies.set(key, value, { expires: 2, secure: true }),
-      removeItem: key => Cookies.remove(key)
-    }
-  })],
   mutations: {
-    LOGGED_TRUE(state, value) {
-      state.logged = value
-    }, 
-    USER_LOGGED(state, value) {
-      state.user = value
-    }
-  },
-  actions: {
-    changelogged(context, value) {
-      context.commit('LOGGED_TRUE', value)
+    setUser(state, user) {
+      state.user = user
     },
-    getuserinf(context, value) {
-      context.commit('USER_LOGGED', value)
+    setToken(state, token) {
+      state.token = token
     }
   },
-  modules: {
-  },
+  actions: {},
+  getters: {
+    isLoggedIn(state) {
+      return !!state.token
+    }
+  }
 })
