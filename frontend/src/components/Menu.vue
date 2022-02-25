@@ -35,10 +35,10 @@ ul
   margin: 0
 
 #menu
-  width: 230px
+  width: 100%
   background-color: white
   position: fixed
-  top: 45px
+  top: 52px
   right: 0
 
 .border
@@ -50,9 +50,10 @@ ul
   text-align: left
   cursor: pointer
   padding: 10px 16px 10px 46px
+  user-select: none
 
-  &:hover
-    background-color: rgb(255, 215, 215)
+  &:hover, &:active
+    background-color: var(--salmon)
 
 .directions
   font-size: 14px
@@ -60,4 +61,9 @@ ul
   line-height: 18px
   vertical-align: middle
   padding-left: 20px
+
+@media screen and (min-width: 615px)
+  
+  #menu
+    width: 240px
 </style>

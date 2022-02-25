@@ -268,7 +268,7 @@ h2
   font-size: 22px
   font-weight: 500
   justify-content: space-between
-  margin: 0 43px
+  margin: 20% 43px
 
   > svg
     cursor: pointer
@@ -281,16 +281,14 @@ h2
   -webkit-transform-style: preserve-3d
   transform-style: preserve-3d
   z-index: 1
-  width: 95%
+  width: 100%
   max-width: 400px
+  height: 100%
 
 form
   user-select: none
-  box-shadow: 4px 4px 8px grey
   background-color: white
-  border-radius: 25px
   box-sizing: border-box
-  padding: 10px 0
   -webkit-transition: all 0.5s ease-in-out
   -moz-transition: all 0.5s ease-in-out
   -o-transition: all 0.5s ease-in-out
@@ -301,6 +299,11 @@ form
   -moz-backface-visibility: hidden
   -o-backface-visibility: hidden
   backface-visibility: hidden
+  height: 100%
+  display: flex
+  flex-direction: column
+  align-content: center
+  justify-content: center
 
   > p
     display: flex
@@ -322,13 +325,14 @@ form
 
 input[type="text"], input[type="password"], input[type="email"]
   background-color: #f5f5f5
-  border-radius: 12px
+  border-radius: 4px
   border: 0
   box-sizing: border-box
   color: black
   outline: none
   width: 80%
   padding: 7px
+  height: 40px
 
 .submit
   background-color: red
@@ -341,6 +345,8 @@ input[type="text"], input[type="password"], input[type="email"]
   height: 50px
   width: 80%
   margin: 20px 0
+  margin: 60px 0
+  align-self: center
 
   &:active, &:hover
     filter: brightness(120%)
@@ -352,9 +358,9 @@ input[type="text"], input[type="password"], input[type="email"]
   position: absolute
   align-self: flex-start
   left: 12%
-  top: 7px
   transform-origin: 0 50%
   transition: transform 200ms, color 200ms
+  top: 13px
 
 .input-container
   display: flex
@@ -389,9 +395,18 @@ input:not(:placeholder-shown) ~ .label.warning
   right: 50px
   cursor: pointer
 
-.widget
-  margin: 5px
-  height: unset
+@media screen and (min-width: 615px)
 
-@media screen and (max-width: 768px)
+  h2
+    margin: 5%
+
+  #signup
+    height: 80%
+
+  form
+    height: 80%
+    border-radius: 20px
+
+  .submit
+    margin: 20px 0
 </style>

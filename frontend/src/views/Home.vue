@@ -20,5 +20,4 @@ export default {
   margin-top: 52px
   width: 100%
   background-color: #DAE0E6
-  height: 1400px
 </style>

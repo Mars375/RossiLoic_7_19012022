@@ -55,7 +55,7 @@ export default {
       sessionStorage.clear();
       this.setToken(null);
       this.setUser(null);
-      window.location.href = "/";
+      await this.$router.go();
     },
   },
 };
@@ -69,7 +69,7 @@ ul
   margin: 0
 
 #menu
-  width: 230px
+  width: 100%
   background-color: white
   position: fixed
   top: 45px
@@ -86,7 +86,7 @@ ul
   padding: 10px 16px 10px 46px
 
   &:hover
-    background-color: rgb(255, 215, 215)
+    background-color: var(--salmon)
 
 .directions
   font-size: 14px
@@ -103,6 +103,9 @@ ul
 
   .user
     display: none
+  
+  #menu
+    width: 240px
 
 @media screen and (min-width: 1070px)
 

@@ -76,7 +76,6 @@ module.exports.updateUser = async (req, res) => {
       bio,
       picture,
       isAdmin,
-      background
     } = req.body
     const user = await models.User.findOne({
       where: {
@@ -112,14 +111,15 @@ module.exports.updateUser = async (req, res) => {
         })
       }
     }
+    if (!req.file)
+      picture == null
     user.set({
       bio: bio || user.bio,
       usename: username || user.username,
       email: email || user.email,
       lastname: lastname || user.lastname,
       firstname: firstname || user.firstname,
-      picture: picture || user.picture,
-      background: background || user.background
+      picture: `${req.protocol}://${req.get('host')}/pictures/${req.file.filename}` || user.picture,
     })
     await user.save()
     res.status(200).json({
@@ -127,6 +127,44 @@ module.exports.updateUser = async (req, res) => {
     })
   } catch (error) {
     res.status(500).json({
+      error
+    })
+  }
+}
+
+module.exports.updateBackground = async (req, res) => {
+  console.log(req.file);
+  let user
+  try {
+    user = await models.User.findOne({
+      where: {
+        id: req.params.id
+      }
+    })
+    if (!user)
+      return res.status(404).json({
+        message: 'User not found'
+      })
+  } catch (error) {
+    return res.status(500).json({
+      error
+    })
+  }
+  if (!req.file)
+    return res.status(200).json({
+      'message': 'No update here'
+    })
+  try {
+    await user.update({
+      background: `${req.protocol}://${req.get('host')}/pictures/${req.file.filename}`
+    })
+    res.status(200).json({
+      'message': 'You have a new background !',
+      background: user.background
+    })
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
       error
     })
   }
@@ -304,12 +342,17 @@ module.exports.getFollow = async (req, res) => {
         personBeingFollowed: req.params.id
       }
     })
-    res.status(200).json({ userFollowing, userFollower })
+    res.status(200).json({
+      userFollowing,
+      userFollower
+    })
   } catch (error) {
     return res.status(500).json({
       error
     })
   }
   if (!userFollower)
-    return res.status(404).json({ 'message': 'User not found' })
+    return res.status(404).json({
+      'message': 'User not found'
+    })
 }

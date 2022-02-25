@@ -25,7 +25,7 @@
           :to="{ name: 'Profil', params: { id: follower.id } }"
           class="flex"
         >
-          <img :src="follower.picture" class="pp" />
+          <img :src="follower.picture" class="pp" alt="image de profil de la personne qui vous suit"/>
           <div>
             <h2 class="name">
               {{ follower.firstname }} {{ follower.lastname }}
@@ -165,7 +165,7 @@ nav
   border-bottom: 1px solid lightgreya
 
   .router-link-exact-active .title
-    background-color: rgb(255, 215, 215)
+    background-color: var(--salmon)
 
 .following, .follower
   width: 50%
@@ -177,10 +177,10 @@ nav
   border-radius: 20px 20px 0 0
   margin-right: 10px
   width: 100%
-  border-bottom: 1px solid rgb(255, 215, 215)
+  border-bottom: 1px solid var(--salmon)
 
   &:hover
-    background-color: rgb(255, 215, 215)
+    background-color: var(--salmon)
 
 .followList
   overflow: hidden
@@ -218,9 +218,9 @@ nav
           color: grey
 
 .unfollowButton
-  border: 1px solid #FD2D01
+  border: 1px solid var(--orange)
   background-color: white
-  color: #fd2d01
+  color: var(--orange)
   padding: 8px
   border-radius: 15px
   cursor: pointer
@@ -229,8 +229,8 @@ nav
   font-weight: bold
 
 .followButton
-  border: 1px solid #FD2D01
-  background-color: #fd2d01
+  border: 1px solid var(--orange)
+  background-color: var(--orange)
   color: white
   padding: 8px
   border-radius: 15px

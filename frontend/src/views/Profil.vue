@@ -1,10 +1,20 @@
 <template>
   <main class="flex">
-    <!-- <div class="magnifier" v-if="!loaded"></div> -->
     <section class="flex profilUser" v-if="loaded">
-      <img :src="profil.background" class="backgroundImg" />
-      <DropAnImage v-if="isLoggedIn" />
-      <img :src="profil.picture" class="pfp" />
+      <img
+        :src="profil.background"
+        class="backgroundImg"
+        alt="image d'arrière plan de l'utilisateur"
+      />
+      <DropBackground v-if="isLoggedIn" class="dropBackground" />
+      <div class="pfpContent">
+        <img
+          :src="profil.picture"
+          class="pfp"
+          alt="image de profil de l'utilisateur"
+        />
+        <DropProfilePicture v-if="isLoggedIn" class="dropProfilePicture" />
+      </div>
       <button
         v-if="isFollow($route.params.id) && isNotHimself($route.params.id)"
         @click="unfollow($route.params.id, $event)"
@@ -20,7 +30,7 @@
         Follow
       </button>
       <article id="idCard">
-        <h2 class="name">{{ profil.firstname }} {{ profil.lastname }}</h2>
+        <div class="cardHeader flex"><h2 class="name">{{ profil.firstname }} {{ profil.lastname }}</h2><EditUser v-if="isLoggedIn" /></div>
         <p>@{{ profil.username }}</p>
         <div class="flex">
           <font-awesome-icon class="icon calendar" icon="calendar-alt" /><span>
@@ -37,7 +47,7 @@
             following</router-link
           >
         </div>
-        <p class="bioUser">{{ profil.bio }}</p>
+        <p class="bioUser">{{ profil.bio }} 🥜</p>
       </article>
     </section>
     <div class="posts" v-if="loaded">
@@ -51,7 +61,9 @@
 
 <script>
 import { mapState, mapGetters } from "vuex";
-import DropAnImage from "../components/DropAnImage.vue";
+import DropBackground from "../components/DropBackground.vue";
+import DropProfilePicture from "../components/DropProfilePicture.vue";
+import EditUser from "../components/EditUser.vue";
 import { mixin as clickaway } from "vue-clickaway";
 
 export default {
@@ -77,38 +89,15 @@ export default {
   },
   name: "Profil",
   components: {
-    DropAnImage,
+    DropBackground,
+    DropProfilePicture,
+    EditUser,
   },
   computed: {
     ...mapState({ user: "user" }),
     ...mapGetters(["isLoggedIn"]),
   },
   methods: {
-    awayUploadImg() {
-      this.uploadBg = false;
-    },
-    async onUpload() {
-      console.log(this.selectedFile);
-      const foundData = new FormData();
-      foundData.append("image", this.selectedFile, this.selectedFile.name);
-      console.log(foundData);
-      // try {
-      //   const params = {
-      //     method: "PUT",
-      //     credentials: "include",
-      //     headers: {
-      //       Accept: "application/json",
-      //       "Content-Type": "application/json",
-      //     },
-      //     body: JSON.stringify ({
-
-      //     })
-      //   };
-      // await fetch(`http://localhost:3000/user/${this.user.id}`, params);
-      // } catch (error) {
-      //   console.log(error);
-      // }
-    },
     isNotHimself(id) {
       if (this.isLoggedIn) if (id != this.user.id) return true;
       return false;
@@ -198,75 +187,47 @@ main
   display: flex
   flex-direction: column
 
-// .magnifier
-//   top: 40%
-//   right: 45%
-//   transform: translate(-50%, -50%)
-//   width: 50px
-//   height: 50px
-//   box-shadow: 0px 0px 0px 1px #fff
-//   border-radius: 50%
-//   position: absolute
-//   margin: auto
-//   -webkit-animation: magnify 1s linear infinite alternate
-//   -moz-animation: magnify 1s linear infinite alternate
-//   animation: magnify 1s linear infinite alternate
-
-//   &:before
-//     content: "Profil"
-//     font-size: 16px
-//     left: 6px
-//     top: 17px
-
-//   &:after
-//     width: 2px
-//     height: 25px
-//     background-color: #fff
-//     bottom: -15px
-//     left: 51px
-//     border-radius: 2px
-//     -webkit-transform: rotate(-45deg)
-//     -moz-transform: rotate(-45deg)
-//     transform: rotate(-45deg)
-//     position: absolute
-//     content: ""
-
-//   &:after, &:before
-//     position: absolute
-
-// @keyframes magnify
-//   0%
-//     transform: scale(1)
-//   100%
-//     transform: scale(1.3)
-
 .profilUser
   flex-direction: column
-  padding-bottom: 20px
   width: 100%
-  background-color: rgb(255, 215, 215)
+  background-color: var(--salmon)
 
-  > div
-    background-color: #DAE0E6
-    width: 40px
-    height: 35px
-    border-radius: 15px
+  > .dropBackground
+    background-color: white
+    width: 30px
+    height: 30px
+    border-radius: 30px
     cursor: pointer
     position: absolute
     top: 210px
-    left: 25px
+    right: 25px
+
+.pfpContent 
+  width: fit-content
+  align-self: center
+  height: 150px
+  margin-top: -40px
+
+  > .dropProfilePicture
+    background-color: white
+    width: 30px
+    height: 30px
+    border-radius: 30px
+    cursor: pointer
+    position: relative
+    bottom: 40px
+    left: 115px
 
 p
   margin-top: 1px
   font-size: 12px
 
 .pfp
-  background-color: rgb(255, 215, 215)
+  background-color: var(--salmon)
   width: 150px
   height: 150px
   border-radius: 100%
   align-self: center
-  margin-top: -50px
 
 .backgroundImg
   object-fit: cover
@@ -274,13 +235,14 @@ p
   height: 200px
 
 #idCard
+  margin-top: 20px
   flex-direction: column
   align-self: center
   background-color: white
-  width: 80%
-  max-width: 500px
-  border-radius: 25px
+  width: 100%
+  max-width: 975px
   padding: 10px
+  border-bottom: 1px solid var(--lightblack)
 
   > div
     align-items: center
@@ -292,9 +254,15 @@ p
       font-size: 14px
       margin-right: 5px
 
-.name
-  font-size: 25px
-  font-weight: bold
+.cardHeader
+  justify-content: center
+
+  > h2
+    font-size: 25px
+    font-weight: bold
+
+  > div
+    color: #666666
 
 .bioUser
   margin: 20px 5px
@@ -322,7 +290,7 @@ p
     text-decoration: underline
 
   > span
-    color: #FD2D01
+    color: var(--orange)
     font-weight: bold
     font-size: 14px
 
@@ -333,9 +301,9 @@ p
   width: 70px
 
 .unfollowButton
-  border: 1px solid #FD2D01
+  border: 1px solid var(--orange)
   background-color: white
-  color: #fd2d01
+  color: var(--orange)
   padding: 8px
   border-radius: 15px
   cursor: pointer
@@ -344,8 +312,8 @@ p
   font-weight: bold
 
 .followButton
-  border: 1px solid #FD2D01
-  background-color: #fd2d01
+  border: 1px solid var(--orange)
+  background-color: var(--orange)
   color: white
   padding: 8px
   border-radius: 15px

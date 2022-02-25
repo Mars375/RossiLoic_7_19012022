@@ -24,7 +24,9 @@ module.exports.signup = async (req, res, next) => {
     bio,
   } = req.body
   if (email == null || username == null || password == null) {
-    return res.status(400).json({ 'error': 'missing parameters' });
+    return res.status(400).json({
+      'error': 'missing parameters'
+    });
   }
   const passwordSecure = zxcvbn(password, [firstname, lastname, email, username])
   if (passwordSecure.score >= 2 || password.toLowerCase().includes('groupomania')) {
@@ -45,7 +47,8 @@ module.exports.signup = async (req, res, next) => {
     } catch (error) {
       console.log(error);
       res.status(403).json({
-        error })
+        error
+      })
     }
   } else {
     return res.status(401).json({
@@ -76,11 +79,15 @@ module.exports.login = async (req, res, next) => {
       })
     const token = createToken(user.id)
     res.cookie('jwt', token, {
-      httpOnly: false,
+      httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000 * 2
     })
     res.status(200).json({
-      user: { id: user.id, username: user.username },
+      user: {
+        id: user.id,
+        username: user.username,
+        admin: user.isAdmin
+      },
       message: "You are now logged in !"
     })
   } catch (error) {

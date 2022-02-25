@@ -21,6 +21,10 @@ export default {
 </script>
 
 <style lang="sass">
+:root
+  --salmon: rgb(255, 215, 215)
+  --orange: #fe8067
+  --lightblack: rgba(32, 33, 36, .2)
 
 .flex
   display: flex
@@ -30,7 +34,7 @@ export default {
   vertical-align: middle
 
   &:active
-    color: #FD2D01
+    color: var(--orange)
 
 button
   text-decoration: none

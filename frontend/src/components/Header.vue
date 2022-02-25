@@ -14,9 +14,6 @@
         />
       </h1>
     </a>
-    <router-link :to="{ name: 'Home' }" v-if="isLoggedIn"
-      ><font-awesome-icon class="icon" icon="home"
-    /></router-link>
     <form
       action="javascript:void(0)"
       autocomplete="off"
@@ -144,7 +141,7 @@ export default {
       sessionStorage.clear();
       this.setToken(null);
       this.setUser(null);
-      window.location.href = "/";
+      await this.$router.go();
     },
   },
   computed: {
@@ -216,7 +213,7 @@ input
   align-self: center
   width: 100%
   height: 52px
-  object-fit: contain
+  padding: 4px 0 4px 4px 
 
 .home
   height: 52px
@@ -235,7 +232,7 @@ input
   color: #2c3e50
 
   &.active
-    color: #FD2D01
+    color: var(--salmon)
 
     & > .chevrondown
       transition-duration: .5s
@@ -261,8 +258,8 @@ input
 
   .signup
     display: inherit
-    border: 1px solid #FD2D01
-    color: #fd2d01
+    border: 1px solid var(--orange)
+    color: var(--orange)
     padding: 8px
     border-radius: 15px
     margin-right: 5px
@@ -270,8 +267,8 @@ input
 
   .login
     display: inherit
-    border: 1px solid #FD2D01
-    background-color: #fd2d01
+    border: 1px solid var(--orange)
+    background-color: var(--orange)
     color: white
     padding: 8px
     border-radius: 15px

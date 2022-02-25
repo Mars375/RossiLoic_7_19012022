@@ -2,10 +2,12 @@ const express = require('express')
 const router = express.Router()
 const userCtrl = require('../controllers/Users')
 const { checkUser, isUser } = require('../middleware/auth')
+const multer = require('../middleware/multer-config')
 
 router.get('/', userCtrl.getAllUsers )
 router.get('/:id', userCtrl.getOneUser )
-router.put('/:id', checkUser, isUser, userCtrl.updateUser)
+router.put('/:id', checkUser, isUser, multer, userCtrl.updateUser)
+router.put('/:id/background', checkUser, isUser, multer, userCtrl.updateBackground)
 router.delete('/:id', checkUser, isUser, userCtrl.deleteUser)
 
 router.get('/follow/:id', userCtrl.getFollow)

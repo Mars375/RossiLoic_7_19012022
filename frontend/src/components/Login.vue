@@ -1,5 +1,12 @@
 <template>
   <div id="login" :class="{ rotated: login }">
+    <form
+      :class="{ rotated: login }"
+      class="loginForm"
+      method="POST"
+      action="javascript:void(0)"
+      autocomplete="off"
+    >
     <div
       class="alert alert-primary"
       role="alert"
@@ -19,13 +26,6 @@
         {{ data.message }}
       </p>
     </div>
-    <form
-      :class="{ rotated: login }"
-      class="loginForm"
-      method="POST"
-      action="javascript:void(0)"
-      autocomplete="off"
-    >
       <h2 class="flex">
         Connexion
         <font-awesome-icon icon="times" @click="$emit('close', false)" />
@@ -182,7 +182,7 @@ h2
   font-size: 22px
   font-weight: 500
   justify-content: space-between
-  margin: 0 43px
+  margin: 20% 43px
 
   > svg
     cursor: pointer
@@ -195,7 +195,8 @@ h2
   -webkit-transform-style: preserve-3d
   transform-style: preserve-3d
   z-index: 0
-  width: 95%
+  width: 100%
+  height: 100%
   max-width: 400px
 
   &.rotated
@@ -205,7 +206,6 @@ form
   user-select: none
   box-shadow: 4px 4px 8px grey
   background-color: white
-  border-radius: 25px
   box-sizing: border-box
   padding: 10px 0
   -webkit-transition: all 0.5s ease-in-out
@@ -218,6 +218,11 @@ form
   -moz-backface-visibility: hidden
   -o-backface-visibility: hidden
   backface-visibility: hidden
+  height: 100%
+  display: flex
+  flex-direction: column
+  align-content: center
+  justify-content: cente
 
   > p
     display: flex
@@ -245,13 +250,14 @@ form
 
 input[type="text"], input[type="password"], input[type="email"]
   background-color: #f5f5f5
-  border-radius: 12px
+  border-radius: 4px
   border: 0
   box-sizing: border-box
   color: black
   outline: none
   width: 80%
   padding: 7px
+  height: 40px
 
 .submit
   background-color: red
@@ -263,7 +269,8 @@ input[type="text"], input[type="password"], input[type="email"]
   font-size: 18px
   height: 50px
   width: 80%
-  margin: 20px 0
+  margin: 60px 0
+  align-self: center
 
   &:active, &:hover
     filter: brightness(120%)
@@ -278,6 +285,7 @@ input[type="text"], input[type="password"], input[type="email"]
   top: 7px
   transform-origin: 0 50%
   transition: transform 200ms, color 200ms
+  top: 13px
 
 .input-container
   display: flex
@@ -314,7 +322,6 @@ input[type="text"], input[type="password"], input[type="email"]
 .alert
   height: 40px
   position: absolute
-  top: -50px
   width: 90%
   color: white
   margin: 0 20px
@@ -332,4 +339,22 @@ input[type="text"], input[type="password"], input[type="email"]
     background-color: red
     justify-content: space-around
     height: 30px
+
+@media screen and (min-width: 615px)
+
+  .alert
+    top: -50px
+
+  h2
+    margin: 5%
+
+  #login
+    height: 80%
+
+  form
+    height: 50%
+    border-radius: 20px
+
+  .submit
+    margin: 20px 0
 </style>
