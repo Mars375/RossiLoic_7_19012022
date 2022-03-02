@@ -268,7 +268,7 @@ h2
   font-size: 22px
   font-weight: 500
   justify-content: space-between
-  margin: 20% 43px
+  margin: 10% 43px
 
   > svg
     cursor: pointer
@@ -282,12 +282,11 @@ h2
   transform-style: preserve-3d
   z-index: 1
   width: 100%
-  max-width: 400px
   height: 100%
 
 form
-  user-select: none
   background-color: white
+  user-select: none
   box-sizing: border-box
   -webkit-transition: all 0.5s ease-in-out
   -moz-transition: all 0.5s ease-in-out
@@ -299,11 +298,8 @@ form
   -moz-backface-visibility: hidden
   -o-backface-visibility: hidden
   backface-visibility: hidden
+  overflow: scroll
   height: 100%
-  display: flex
-  flex-direction: column
-  align-content: center
-  justify-content: center
 
   > p
     display: flex
@@ -344,8 +340,7 @@ input[type="text"], input[type="password"], input[type="email"]
   font-size: 18px
   height: 50px
   width: 80%
-  margin: 20px 0
-  margin: 60px 0
+  margin: 40px 0
   align-self: center
 
   &:active, &:hover
@@ -370,7 +365,7 @@ input[type="text"], input[type="password"], input[type="email"]
   margin-top: 20px
 
 input:focus ~ .label, input:not(:placeholder-shown) ~ .label
-  transform: translateY(-22px) translateX(10px) scale(0.75)
+  transform: translateY(-26px) translateX(10px) scale(0.75)
   color: #70d270
 
 input:not(:placeholder-shown) ~ .label.warning
@@ -402,6 +397,7 @@ input:not(:placeholder-shown) ~ .label.warning
 
   #signup
     height: 80%
+    max-width: 400px
 
   form
     height: 80%

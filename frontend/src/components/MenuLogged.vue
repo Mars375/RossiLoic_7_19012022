@@ -72,7 +72,7 @@ ul
   width: 100%
   background-color: white
   position: fixed
-  top: 45px
+  top: 52px
   right: 0
 
 .border

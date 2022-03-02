@@ -13,7 +13,7 @@
           class="pfp"
           alt="image de profil de l'utilisateur"
         />
-        <DropProfilePicture v-if="isLoggedIn" class="dropProfilePicture" />
+        <!-- <DropProfilePicture v-if="isLoggedIn" class="dropProfilePicture" /> -->
       </div>
       <button
         v-if="isFollow($route.params.id) && isNotHimself($route.params.id)"
@@ -30,9 +30,9 @@
         Follow
       </button>
       <article id="idCard">
-        <div class="cardHeader flex"><h2 class="name">{{ profil.firstname }} {{ profil.lastname }}</h2><EditUser v-if="isLoggedIn" /></div>
+        <div class="cardHeader flex"><h2 class="name">{{ profil.firstname }} {{ profil.lastname }}</h2></div>
         <p>@{{ profil.username }}</p>
-        <div class="flex">
+        <div class="flex createdAt">
           <font-awesome-icon class="icon calendar" icon="calendar-alt" /><span>
             Créé le {{ profil.createdAt.toLocaleString() }}
           </span>
@@ -48,6 +48,7 @@
           >
         </div>
         <p class="bioUser">{{ profil.bio }} 🥜</p>
+        <EditUser v-if="isLoggedIn" />
       </article>
     </section>
     <div class="posts" v-if="loaded">
@@ -62,7 +63,7 @@
 <script>
 import { mapState, mapGetters } from "vuex";
 import DropBackground from "../components/DropBackground.vue";
-import DropProfilePicture from "../components/DropProfilePicture.vue";
+// import DropProfilePicture from "../components/DropProfilePicture.vue";
 import EditUser from "../components/EditUser.vue";
 import { mixin as clickaway } from "vue-clickaway";
 
@@ -90,7 +91,7 @@ export default {
   name: "Profil",
   components: {
     DropBackground,
-    DropProfilePicture,
+    // DropProfilePicture,
     EditUser,
   },
   computed: {
@@ -208,19 +209,14 @@ main
   height: 150px
   margin-top: -40px
 
-  > .dropProfilePicture
-    background-color: white
-    width: 30px
-    height: 30px
-    border-radius: 30px
-    cursor: pointer
-    position: relative
-    bottom: 40px
-    left: 115px
-
-p
-  margin-top: 1px
+p 
   font-size: 12px
+
+.createdAt
+  margin-top: 10px
+
+.follow
+  margin-top: 10px
 
 .pfp
   background-color: var(--salmon)
@@ -241,13 +237,12 @@ p
   background-color: white
   width: 100%
   max-width: 975px
-  padding: 10px
+  padding: 30px
   border-bottom: 1px solid var(--lightblack)
 
   > div
     align-items: center
     justify-content: center
-    margin: 10px
     font-size: 12px
 
     > .calendar
@@ -265,7 +260,7 @@ p
     color: #666666
 
 .bioUser
-  margin: 20px 5px
+  margin: 20px 0 35px 0
   font-size: 18px
 
 .posts

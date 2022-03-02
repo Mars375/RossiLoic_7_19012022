@@ -182,7 +182,7 @@ h2
   font-size: 22px
   font-weight: 500
   justify-content: space-between
-  margin: 20% 43px
+  margin: 9% 43px
 
   > svg
     cursor: pointer
@@ -197,7 +197,6 @@ h2
   z-index: 0
   width: 100%
   height: 100%
-  max-width: 400px
 
   &.rotated
     z-index: 2
@@ -219,10 +218,6 @@ form
   -o-backface-visibility: hidden
   backface-visibility: hidden
   height: 100%
-  display: flex
-  flex-direction: column
-  align-content: center
-  justify-content: cente
 
   > p
     display: flex
@@ -267,9 +262,9 @@ input[type="text"], input[type="password"], input[type="email"]
   color: #eee
   cursor: pointer
   font-size: 18px
-  height: 50px
+  min-height: 60px
   width: 80%
-  margin: 60px 0
+  margin: 40px 0
   align-self: center
 
   &:active, &:hover
@@ -296,7 +291,7 @@ input[type="text"], input[type="password"], input[type="email"]
   z-index: 0
 
   input:focus ~ .label, input:not(:placeholder-shown) ~ .label
-    transform: translateY(-22px) translateX(10px) scale(0.75)
+    transform: translateY(-26px) translateX(10px) scale(0.75)
     color: #70d270
 
   p
@@ -312,7 +307,7 @@ input[type="text"], input[type="password"], input[type="email"]
 .show
   position: absolute
   top: 5px
-  right: 50px
+  right: 60px
   cursor: pointer
 
 .widget
@@ -350,6 +345,7 @@ input[type="text"], input[type="password"], input[type="email"]
 
   #login
     height: 80%
+    max-width: 400px
 
   form
     height: 50%

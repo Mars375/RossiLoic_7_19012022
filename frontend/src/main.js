@@ -21,13 +21,13 @@ import {
   faCalendarAlt,
   faArrowLeft,
   faCameraRetro,
-  faUserEdit
+  faEllipsisH,
 } from '@fortawesome/free-solid-svg-icons'
 import {
   FontAwesomeIcon
 } from '@fortawesome/vue-fontawesome'
 
-library.add(faUser, faChevronDown, faSearch, faMoon, faSignInAlt, faArrowRight, faEye, faEyeSlash, faTimes, faBars, faIdCard, faHome, faCalendarAlt, faArrowLeft, faCameraRetro,faUserEdit)
+library.add(faUser, faChevronDown, faSearch, faMoon, faSignInAlt, faArrowRight, faEye, faEyeSlash, faTimes, faBars, faIdCard, faHome, faCalendarAlt, faArrowLeft, faCameraRetro, faEllipsisH)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 

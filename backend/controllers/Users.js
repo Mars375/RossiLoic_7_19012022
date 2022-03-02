@@ -46,7 +46,6 @@ module.exports.getOneUser = async (req, res) => {
       attributes: {
         exclude: [
           'password',
-          'email',
           'id',
           'isAdmin'
         ],
@@ -66,6 +65,8 @@ module.exports.getOneUser = async (req, res) => {
 }
 
 module.exports.updateUser = async (req, res) => {
+  let picture
+  console.log(req.body);
   try {
     const {
       email,
@@ -74,7 +75,6 @@ module.exports.updateUser = async (req, res) => {
       firstname,
       password,
       bio,
-      picture,
       isAdmin,
     } = req.body
     const user = await models.User.findOne({
@@ -82,10 +82,11 @@ module.exports.updateUser = async (req, res) => {
         id: req.params.id
       }
     })
-    if (!user)
+    if (!user){
       return res.status(404).json({
         message: 'User not found'
       })
+    }
     if (res.locals.user.isAdmin) {
       if (isAdmin)
         await user.update({
@@ -111,21 +112,23 @@ module.exports.updateUser = async (req, res) => {
         })
       }
     }
-    if (!req.file)
-      picture == null
+    if (req.file)
+      picture = `${req.protocol}://${req.get('host')}/pictures/${req.file.filename}`
     user.set({
       bio: bio || user.bio,
-      usename: username || user.username,
+      username: username || user.username,
       email: email || user.email,
       lastname: lastname || user.lastname,
       firstname: firstname || user.firstname,
-      picture: `${req.protocol}://${req.get('host')}/pictures/${req.file.filename}` || user.picture,
+      picture:  picture || user.picture,
     })
+    // console.log(user);
     await user.save()
     res.status(200).json({
       message: 'Your profil is update !'
     })
   } catch (error) {
+    console.log(error);
     res.status(500).json({
       error
     })
@@ -133,7 +136,6 @@ module.exports.updateUser = async (req, res) => {
 }
 
 module.exports.updateBackground = async (req, res) => {
-  console.log(req.file);
   let user
   try {
     user = await models.User.findOne({
@@ -163,7 +165,6 @@ module.exports.updateBackground = async (req, res) => {
       background: user.background
     })
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       error
     })
