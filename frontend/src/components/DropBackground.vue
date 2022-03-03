@@ -75,7 +75,7 @@ export default {
           body: formData,
         };
         await fetch(
-          `${process.env.VUE_APP_API_URL}/user/${this.user.id}/background`,
+          `${location.protocol}//${location.hostname}:3000/user/${this.user.id}/background`,
           params
         );
         await this.$router.go();

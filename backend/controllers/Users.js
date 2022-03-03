@@ -66,7 +66,6 @@ module.exports.getOneUser = async (req, res) => {
 
 module.exports.updateUser = async (req, res) => {
   let picture
-  console.log(req.body);
   try {
     const {
       email,
@@ -82,7 +81,7 @@ module.exports.updateUser = async (req, res) => {
         id: req.params.id
       }
     })
-    if (!user){
+    if (!user) {
       return res.status(404).json({
         message: 'User not found'
       })
@@ -120,7 +119,7 @@ module.exports.updateUser = async (req, res) => {
       email: email || user.email,
       lastname: lastname || user.lastname,
       firstname: firstname || user.firstname,
-      picture:  picture || user.picture,
+      picture: picture || user.picture,
     })
     // console.log(user);
     await user.save()
@@ -229,12 +228,15 @@ module.exports.deleteUser = async (req, res) => {
         message: 'User not found'
       })
     await user.destroy();
-    res.status(200).json({
+    res.cookie('jwt', '', {
+      maxAge: 0
+    })
+    return res.status(200).json({
       message: "Successfully deleted !"
     })
   } catch (error) {
     console.log(error);
-    res.status(500).json({
+    return res.status(500).json({
       error
     })
   }

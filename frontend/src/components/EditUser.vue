@@ -2,13 +2,8 @@
   <div class="editContent">
     <a class="editUser" @click="editUser = !editUser"> MODIFIER LES INFOS </a>
     <div class="fondBackground" @click="editUser = false" v-if="editUser"></div>
-    <div id="signup" v-if="editUser">
-      <form
-        class="signupForm"
-        method="PUT"
-        action="javascript:void(0)"
-        autocomplete="off"
-      >
+    <div id="update" v-if="editUser">
+      <form method="PUT" action="javascript:void(0)" autocomplete="off">
         <h2 class="flex">
           Modifier les infos
           <font-awesome-icon icon="times" @click="editUser = false" />
@@ -18,8 +13,30 @@
             :src="user.picture"
             class="pfp"
             alt="image de profil de l'utilisateur"
+            v-if="!selectedFile"
           />
-          <DropProfilePicture v-if="editUser" class="dropProfilePicture" />
+          <img
+            :src="imageUrl"
+            class="pfp"
+            alt="image de profil de l'utilisateur"
+            v-if="selectedFile"
+          />
+          <font-awesome-icon
+            icon="times"
+            class="icon close"
+            @click="removeFile()"
+            v-if="selectedFile"
+          />
+          <input
+            id="file"
+            class="fileInput"
+            type="file"
+            accept=".jpg, .jpeg, .png, .gif, .webp"
+            @change="onFileSelected"
+          />
+          <label for="file" class="labelFile">
+            <font-awesome-icon class="icon" icon="camera-retro"
+          /></label>
         </div>
         <div class="input-container">
           <input
@@ -107,16 +124,16 @@
           >
         </div>
         <button @click="submit()" class="submit">Appliquer</button>
-        <button @click="deleteUser()" class="remove">Supprimer</button>
+        <button @click="deleteUser()" class="submit remove">Supprimer</button>
       </form>
     </div>
   </div>
 </template>
 
 <script>
-import DropProfilePicture from "../components/DropProfilePicture.vue";
 const { isEmail } = require("validator");
 const zxcvbn = require("zxcvbn");
+import { mapMutations } from "vuex";
 
 export default {
   data() {
@@ -128,6 +145,7 @@ export default {
       password: "",
       checkpassword: "",
       username: "",
+      selectedFile: null,
       editUser: false,
       user: {},
       show: true,
@@ -135,9 +153,7 @@ export default {
       typepassword: "password",
     };
   },
-  components: {
-    DropProfilePicture,
-  },
+  components: {},
   computed: {
     regexpfirstname() {
       if (!this.firstname.match(/^[A-zÀ-ú' -]*$/)) {
@@ -182,31 +198,63 @@ export default {
     },
   },
   methods: {
+    ...mapMutations(["setUser", "setToken"]),
+    removeFile() {
+      document.getElementById("file").value = null;
+      this.selectedFile = null;
+    },
+    onFileSelected(event) {
+      this.selectedFile = event.target.files[0];
+      var urlCreator = window.URL || window.webkitURL;
+      this.imageUrl = urlCreator.createObjectURL(this.selectedFile);
+    },
+    async deleteUser() {
+      if (confirm("Etes-vous sûr de vouloir supprimer votre profil ?")) {
+        const params = {
+          method: "DELETE",
+          credentials: "include",
+        };
+        console.log(process.env.VUE_APP_API_URL);
+        try {
+          const response = await fetch(
+            `${location.protocol}//${location.hostname}:3000/user/${this.$route.params.id}`,
+            params
+          );
+          await response.json();
+          this.setToken(null);
+          this.setUser(null);
+          await this.$router.push({ name: 'Home' })
+        } catch (error) {
+          error;
+        }
+      }
+    },
     async submit() {
+      const infosUser = {
+        firstname: this.firstname,
+        lastname: this.lastname,
+        username: this.username,
+        email: this.mail,
+        password: this.password,
+        bio: this.bio,
+      };
+      const formData = new FormData();
+      formData.append("image", this.selectedFile);
+      formData.append("user", JSON.stringify(infosUser));
+      console.log(formData);
       const settings = {
         method: "PUT",
         credentials: "include",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          firstname: this.firstname,
-          lastname: this.lastname,
-          username: this.username,
-          email: this.mail,
-          password: this.password,
-          bio: this.bio,
-        }),
+        body: formData,
       };
       try {
         const fetchResponse = await fetch(
-          `${process.env.VUE_APP_API_URL}/user/${this.$route.params.id}`,
+          `${location.protocol}//${location.hostname}:3000/user/${this.$route.params.id}`,
           settings
         );
-          const data = await fetchResponse.json();
-          alert(data.message);
-          this.$router.go()
+        const data = await fetchResponse.json();
+        alert(data.message);
+        this.$router.go();
       } catch {
         return;
       }
@@ -235,14 +283,14 @@ export default {
   async created() {
     try {
       const response = await fetch(
-        `${process.env.VUE_APP_API_URL}/user/${this.$route.params.id}`
+        `${location.protocol}//${location.hostname}:3000/user/${this.$route.params.id}`
       );
       this.user = await response.json();
-      this.firstname = this.user.firstname
-      this.lastname = this.user.lastname
-      this.username = this.user.username
-      this.mail = this.user.email
-      this.bio = this.user.bio
+      this.firstname = this.user.firstname;
+      this.lastname = this.user.lastname;
+      this.username = this.user.username;
+      this.mail = this.user.email;
+      this.bio = this.user.bio;
     } catch (error) {
       console.log(error);
     }
@@ -276,13 +324,36 @@ export default {
 .pfpContent
   height: 150px
   width: 150px
-  margin: 0 auto 40px auto
+  margin: 0 auto
   flex-direction: column
 
   > img
     height: 150px
     width: 150px
     border-radius: 150px
+
+.labelFile
+  margin-top: -37px
+  margin-left: 113px
+  width: 29px
+  height: 30px
+  background-color: white
+  border-radius: 30px
+  border: 1px solid var(--lightblack)
+  display: flex
+  justify-content: center
+  align-items: center
+
+.close
+  position: absolute
+  margin-left: 130px
+  top: 55px
+
+.fa-camera-retro
+  color: var(--orange)
+
+input[type="file"]
+  display: none
 
 .dropProfilePicture
   background-color: white
@@ -304,7 +375,7 @@ h2
   > svg
     cursor: pointer
 
-#signup
+#update
   position: fixed
   top: 50%
   left: 50%
@@ -375,7 +446,7 @@ input[type="text"], input[type="password"], input[type="email"], textarea
   font-size: 18px
   height: 50px
   width: 80%
-  margin-top: 40px
+  margin-top: 30px
   align-self: center
 
   &:active, &:hover
@@ -431,15 +502,15 @@ input:not(:placeholder-shown) ~ .label.warning
   cursor: pointer
 
 .remove
-  display: block
+  margin-bottom: 10px
 
 @media screen and (min-width: 615px)
 
   h2
     margin: 5%
 
-  #signup
-    height: 80%
+  #update
+    height: fit-content
     max-width: 400px
 
   form

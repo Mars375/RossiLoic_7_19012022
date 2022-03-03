@@ -14,8 +14,6 @@ export default {
 
 <style lang="sass">
 .widget 
-  margin: 20px
-  height: 50px
   text-align: center
 
 .loader

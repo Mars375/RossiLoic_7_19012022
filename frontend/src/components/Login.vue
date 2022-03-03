@@ -141,27 +141,27 @@ export default {
       };
       try {
         const fetchResponse = await fetch(
-          `${process.env.VUE_APP_API_URL}/auth/login`,
+          `${location.protocol}//${location.hostname}:3000/auth/login`,
           settings
         );
-        if (fetchResponse.ok) {
+        if (fetchResponse.ok)
           setTimeout(async () => {
             this.data = await fetchResponse.json();
             this.setUser(this.data.user);
-            this.setToken(document.cookie.split(';'))
+            if(document.cookie)
+              this.setToken(document.cookie.split(';'))
             this.isLoggingIn = false;
             this.isLogged = true;
             setTimeout(() => this.redirect(), 500);
           }, 700);
-        } else {
+        else
           setTimeout(async () => {
-            const { user } = await fetchResponse.json();
-            this.setUser(user);
+            const { message } = await fetchResponse.json();
+            this.data.message = message
             this.isLoggingIn = false;
             this.isntLogged = true;
             setTimeout(() => (this.isntLogged = false), 1250);
           }, 700);
-        }
       } catch (error) {
         this.error = error;
       }

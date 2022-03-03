@@ -89,7 +89,7 @@ export default {
         credentials: "include",
       };
       try {
-        await fetch(`${process.env.VUE_APP_API_URL}/user/follow/${id}`, settings);
+        await fetch(`${location.protocol}//${location.hostname}:3000/user/follow/${id}`, settings);
         this.follows.userFollowing.push({
           personBeingFollowed: id,
           personFollowing: this.user.id,
@@ -104,7 +104,7 @@ export default {
         credentials: "include",
       };
       try {
-        await fetch(`${process.env.VUE_APP_API_URL}/user/unfollow/${id}`, settings);
+        await fetch(`${location.protocol}//${location.hostname}:3000/user/unfollow/${id}`, settings);
         this.follows.userFollowing.splice(
           this.follows.userFollowing.indexOf(event),
           1
@@ -129,14 +129,14 @@ export default {
   async created() {
     try {
       const response = await fetch(
-        `${process.env.VUE_APP_API_URL}/user/follow/${this.$route.params.id}`
+        `${location.protocol}//${location.hostname}:3000/user/follow/${this.$route.params.id}`
       );
       this.follows = await response.json();
     } catch (error) {
       console.log(error);
     }
     try {
-      const response = await fetch(`${process.env.VUE_APP_API_URL}/user`);
+      const response = await fetch(`${location.protocol}//${location.hostname}:3000/user`);
       this.users = await response.json();
       this.filterUser = this.users.filter((el) => {
         return this.follows.userFollower.some((f) => {

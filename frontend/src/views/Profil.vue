@@ -112,7 +112,7 @@ export default {
     async follow(id) {
       try {
         await fetch(
-          `${process.env.VUE_APP_API_URL}/user/follow/${id}`,
+          `${location.protocol}//${location.hostname}:3000/user/follow/${id}`,
           this.settings
         );
         this.follows.userFollowing.push({
@@ -126,7 +126,7 @@ export default {
     async unfollow(id, event) {
       try {
         await fetch(
-          `${process.env.VUE_APP_API_URL}/user/unfollow/${id}`,
+          `${location.protocol}//${location.hostname}:3000/user/unfollow/${id}`,
           this.settings
         );
         this.follows.userFollowing.splice(
@@ -140,7 +140,7 @@ export default {
     async initData() {
       try {
         const response = await fetch(
-          `${process.env.VUE_APP_API_URL}/user/${this.$route.params.id}`
+          `${location.protocol}//${location.hostname}:3000/user/${this.$route.params.id}`
         );
         this.profil = await response.json();
         this.profil.createdAt = new Date(this.profil.createdAt);
@@ -149,7 +149,7 @@ export default {
       }
       try {
         const response = await fetch(
-          `${process.env.VUE_APP_API_URL}/post/user/${this.$route.params.id}`
+          `${location.protocol}//${location.hostname}:3000/post/user/${this.$route.params.id}`
         );
         this.posts = await response.json();
         this.posts = this.posts.posts;
@@ -158,7 +158,7 @@ export default {
       }
       try {
         const response = await fetch(
-          `${process.env.VUE_APP_API_URL}/user/follow/${this.$route.params.id}`
+          `${location.protocol}//${location.hostname}:3000/user/follow/${this.$route.params.id}`
         );
         this.followProfil = await response.json();
         this.loaded = true;
@@ -173,7 +173,7 @@ export default {
     this.$watch(() => this.$route.params, this.initData);
     try {
       const response = await fetch(
-        `${process.env.VUE_APP_API_URL}/user/follow/${this.$route.params.id}`
+        `${location.protocol}//${location.hostname}:3000/user/follow/${this.$route.params.id}`
       );
       this.follows = await response.json();
     } catch (error) {

@@ -134,7 +134,7 @@ export default {
         },
       };
       try {
-        await fetch(`${process.env.VUE_APP_API_URL}/auth/logout`, settings);
+        await fetch(`${location.protocol}//${location.hostname}:3000/auth/logout`, settings);
       } catch (error) {
         console.log(error);
       }

@@ -242,7 +242,7 @@ export default {
       };
       try {
         const fetchResponse = await fetch(
-          `${process.env.VUE_APP_API_URL}/auth/signup`,
+          `${location.protocol}//${location.hostname}:3000/auth/signup`,
           settings
         );
         setTimeout(async () => {
