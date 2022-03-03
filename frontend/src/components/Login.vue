@@ -7,25 +7,25 @@
       action="javascript:void(0)"
       autocomplete="off"
     >
-    <div
-      class="alert alert-primary"
-      role="alert"
-      :style="{ opacity: isLogged ? 1 : 0 }"
-    >
-      <p class="ok" v-if="isLogged">
-        {{ data.message }}
-        <loading-component width="25"></loading-component>
-      </p>
-    </div>
-    <div
-      class="alert alert-primary"
-      role="alert"
-      :style="{ opacity: isntLogged ? 1 : 0 }"
-    >
-      <p class="error" v-if="isntLogged">
-        {{ data.message }}
-      </p>
-    </div>
+      <div
+        class="alert alert-primary"
+        role="alert"
+        :style="{ opacity: isLogged ? 1 : 0 }"
+      >
+        <p class="ok" v-if="isLogged">
+          {{ data.message }}
+          <loading-component width="25"></loading-component>
+        </p>
+      </div>
+      <div
+        class="alert alert-primary"
+        role="alert"
+        :style="{ opacity: isntLogged ? 1 : 0 }"
+      >
+        <p class="error" v-if="isntLogged">
+          {{ data.message }}
+        </p>
+      </div>
       <h2 class="flex">
         Connexion
         <font-awesome-icon icon="times" @click="$emit('close', false)" />
@@ -97,11 +97,11 @@ export default {
       typepassword: "password",
       show: true,
       error: "",
-      data: {}
+      data: {},
     };
   },
   computed: {
-    ...mapState({user: "user"})
+    ...mapState({ user: "user" }),
   },
   props: {
     login: Boolean,
@@ -148,8 +148,12 @@ export default {
           setTimeout(async () => {
             this.data = await fetchResponse.json();
             this.setUser(this.data.user);
-            if(document.cookie)
-              this.setToken(document.cookie.split(';'))
+            if (document.cookie)
+              this.setToken(
+                document.cookie
+                  .split("; ")
+                  .find((cookie) => cookie.startsWith("jwt="))
+              );
             this.isLoggingIn = false;
             this.isLogged = true;
             setTimeout(() => this.redirect(), 500);
@@ -157,7 +161,7 @@ export default {
         else
           setTimeout(async () => {
             const { message } = await fetchResponse.json();
-            this.data.message = message
+            this.data.message = message;
             this.isLoggingIn = false;
             this.isntLogged = true;
             setTimeout(() => (this.isntLogged = false), 1250);

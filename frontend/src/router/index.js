@@ -1,9 +1,11 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
+import VueCookies from 'vue-cookies'
+import Store from '../store/index'
 
-Vue.use(VueRouter)
-
+Vue.use(VueCookies);
+Vue.use(VueRouter);
 const routes = [{
     path: '/',
     name: 'Home',
@@ -32,7 +34,12 @@ const router = new VueRouter({
   routes,
 })
 
+
 router.beforeEach((to, from, next) => {
+  Store.commit('setToken', document.cookie
+    .split("; ")
+    .find((cookie) => cookie.startsWith("jwt="))
+  );
   next()
 })
 

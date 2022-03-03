@@ -214,7 +214,6 @@ export default {
           method: "DELETE",
           credentials: "include",
         };
-        console.log(process.env.VUE_APP_API_URL);
         try {
           const response = await fetch(
             `${location.protocol}//${location.hostname}:3000/user/${this.$route.params.id}`,
@@ -241,7 +240,6 @@ export default {
       const formData = new FormData();
       formData.append("image", this.selectedFile);
       formData.append("user", JSON.stringify(infosUser));
-      console.log(formData);
       const settings = {
         method: "PUT",
         credentials: "include",
@@ -254,7 +252,7 @@ export default {
         );
         const data = await fetchResponse.json();
         alert(data.message);
-        this.$router.go();
+        await this.$router.go();
       } catch {
         return;
       }

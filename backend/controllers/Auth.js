@@ -85,7 +85,8 @@ module.exports.login = async (req, res, next) => {
       user: {
         id: user.id,
         username: user.username,
-        admin: user.isAdmin
+        admin: user.isAdmin,
+        picture: user.picture
       },
       message: "You are now logged in !"
     })

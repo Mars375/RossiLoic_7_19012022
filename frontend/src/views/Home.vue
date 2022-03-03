@@ -6,11 +6,19 @@
 
 <script>
 // @ is an alias to /src
-
+import { mapState } from "vuex";
 export default {
+  data() {
+    return {
+      postContent: ""
+    }
+  },
   name: "Home",
   components: {
     // HelloWorld
+  },
+  computed: {
+    ...mapState({ user: "user" }),
   },
 };
 </script>
