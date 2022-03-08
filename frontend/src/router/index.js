@@ -6,7 +6,9 @@ import Store from '../store/index'
 
 Vue.use(VueCookies);
 Vue.use(VueRouter);
-const routes = [{
+
+const routes = [
+  {
     path: '/',
     name: 'Home',
     component: Home,
@@ -25,6 +27,11 @@ const routes = [{
     path: '/profil/:id/following',
     name: 'Following',
     component: () => import('../views/Following.vue')
+  },
+  {
+    path: '/submit',
+    name: 'NewPost',
+    component: () => import('../views/NewPost.vue')
   }
 ]
 
@@ -40,6 +47,8 @@ router.beforeEach((to, from, next) => {
     .split("; ")
     .find((cookie) => cookie.startsWith("jwt="))
   );
+  if(!document.cookie)
+    Store.commit('setUser', null)
   next()
 })
 

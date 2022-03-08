@@ -148,15 +148,17 @@ export default {
           setTimeout(async () => {
             this.data = await fetchResponse.json();
             this.setUser(this.data.user);
-            if (document.cookie)
-              this.setToken(
-                document.cookie
-                  .split("; ")
-                  .find((cookie) => cookie.startsWith("jwt="))
-              );
             this.isLoggingIn = false;
             this.isLogged = true;
-            setTimeout(() => this.redirect(), 500);
+            setTimeout(() => {
+              if (document.cookie)
+                this.setToken(
+                  document.cookie
+                    .split("; ")
+                    .find((cookie) => cookie.startsWith("jwt="))
+                );
+              this.redirect()
+            }, 500);
           }, 700);
         else
           setTimeout(async () => {

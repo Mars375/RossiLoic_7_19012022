@@ -165,7 +165,7 @@ export default {
       font-size: 14px
 
 nav
-  border-bottom: 1px solid lightgreya
+  border-bottom: 1px solid lightgrey
 
   .router-link-exact-active .title
     background-color: var(--salmon)

@@ -1,12 +1,13 @@
 <template>
   <main class="home">
-    <p>Je suis un post</p>
+    <CreatePost v-if="isLoggedIn"/>
   </main>
 </template>
 
 <script>
 // @ is an alias to /src
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
+import CreatePost from '../components/CreatePost.vue'
 export default {
   data() {
     return {
@@ -15,9 +16,10 @@ export default {
   },
   name: "Home",
   components: {
-    // HelloWorld
+    CreatePost
   },
   computed: {
+    ...mapGetters(["isLoggedIn"]),
     ...mapState({ user: "user" }),
   },
 };

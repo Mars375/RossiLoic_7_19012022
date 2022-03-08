@@ -13,7 +13,6 @@
           class="pfp"
           alt="image de profil de l'utilisateur"
         />
-        <!-- <DropProfilePicture v-if="isLoggedIn" class="dropProfilePicture" /> -->
       </div>
       <button
         v-if="isFollow($route.params.id) && isNotHimself($route.params.id)"
@@ -63,7 +62,6 @@
 <script>
 import { mapState, mapGetters } from "vuex";
 import DropBackground from "../components/DropBackground.vue";
-// import DropProfilePicture from "../components/DropProfilePicture.vue";
 import EditUser from "../components/EditUser.vue";
 import { mixin as clickaway } from "vue-clickaway";
 
@@ -91,7 +89,6 @@ export default {
   name: "Profil",
   components: {
     DropBackground,
-    // DropProfilePicture,
     EditUser,
   },
   computed: {
@@ -236,7 +233,6 @@ p
   align-self: center
   background-color: white
   width: 100%
-  max-width: 975px
   padding: 30px
   border-bottom: 1px solid var(--lightblack)
 
