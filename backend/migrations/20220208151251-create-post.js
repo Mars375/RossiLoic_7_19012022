@@ -21,7 +21,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       content: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.TEXT
       },
       category: {

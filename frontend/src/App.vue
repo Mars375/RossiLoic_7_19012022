@@ -25,6 +25,7 @@ export default {
   --salmon: rgb(255, 215, 215)
   --orange: #fe8067
   --lightblack: rgba(32, 33, 36, .2)
+  --darkergrey: hsl(0, 0%, 45%)
 
 .flex
   display: flex

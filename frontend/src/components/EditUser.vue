@@ -222,7 +222,7 @@ export default {
           await response.json();
           this.setToken(null);
           this.setUser(null);
-          await this.$router.push({ name: 'Home' })
+          await this.$router.push({ name: "Home" });
         } catch (error) {
           error;
         }
