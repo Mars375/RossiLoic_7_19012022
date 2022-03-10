@@ -1,9 +1,7 @@
 <template>
   <div id="app">
     <Header />
-    <!-- <transition name="dropdown" mode="out-in"> -->
       <router-view></router-view>
-    <!-- </transition> -->
   </div>
 </template>
 
@@ -26,6 +24,20 @@ export default {
   --orange: #fe8067
   --lightblack: rgba(32, 33, 36, .2)
   --darkergrey: hsl(0, 0%, 45%)
+
+#inspire
+  background: none
+  margin-top: 20px
+  width: 100%
+
+  .v-application--wrap
+    min-height: 80px
+
+  .container 
+    padding: 0
+
+  .v-menu__content
+    left: 0 !important
 
 .flex
   display: flex

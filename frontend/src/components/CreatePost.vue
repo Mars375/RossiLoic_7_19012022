@@ -24,7 +24,7 @@ export default {
 .createPost
   width: 100%
   justify-content: center
-  margin-top: 72px
+  margin-top: 20px
   align-items: center
 
 .button
@@ -36,6 +36,7 @@ export default {
   border-radius: 15px
   cursor: pointer
   font-weight: bold
+  max-width: fit-content
 
   > svg
     margin-right: 10px

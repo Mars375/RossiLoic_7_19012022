@@ -40,6 +40,7 @@ ul
   position: fixed
   top: 52px
   right: 0
+  z-index: 1
 
 .border
   border-top: 1px solid lightgrey

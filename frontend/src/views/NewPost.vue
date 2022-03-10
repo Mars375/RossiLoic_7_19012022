@@ -3,16 +3,70 @@
     <div class="titleContent flex">
       <h2>Crée un post</h2>
     </div>
-    <div class="tag flex">
-      <label for="tag" class="tagLabel">Tag</label>
-      <input
-        type="text"
-        v-model="category"
-        id="tag"
-        name="tag"
-        placeholder="Animaux, Jeux-vidéo, Musique ..."
-      />
-    </div>
+    <v-app id="inspire">
+      <v-container fluid>
+        <v-combobox
+          v-model="model"
+          :filter="filter"
+          :hide-no-data="!search"
+          :items="items"
+          :search-input.sync="search"
+          hide-selected
+          label="Search for an option"
+          multiple
+          small-chips
+          solo
+          height="60px"
+        >
+          <template v-slot:no-data>
+            <v-list-item active-class="listpouet">
+              <span class="subheading">Create</span>
+              <v-chip :color="`${colors[nonce - 1]} lighten-3`" label small>
+                {{ search }}
+              </v-chip>
+            </v-list-item>
+          </template>
+          <template v-slot:selection="{ attrs, item, parent, selected }">
+            <v-chip
+              v-if="item === Object(item)"
+              v-bind="attrs"
+              :color="`${item.color} lighten-3`"
+              :input-value="selected"
+              label
+              small
+            >
+              <span class="pr-2">
+                {{ item.text }}
+              </span>
+              <v-icon small @click="parent.selectItem(item)"> $delete </v-icon>
+            </v-chip>
+          </template>
+          <template v-slot:item="{ index, item }">
+            <v-text-field
+              v-if="editing === item"
+              v-model="editing.text"
+              autofocus
+              flat
+              background-color="transparent"
+              hide-details
+              solo
+              @keyup.enter="edit(index, item)"
+            ></v-text-field>
+            <v-chip v-else :color="`${item.color} lighten-3`" dark label small>
+              {{ item.text }}
+            </v-chip>
+            <v-spacer></v-spacer>
+            <v-list-item-action @click.stop>
+              <v-btn icon @click.stop.prevent="edit(index, item)">
+                <v-icon>{{
+                  editing !== item ? "mdi-pencil" : "mdi-check"
+                }}</v-icon>
+              </v-btn>
+            </v-list-item-action>
+          </template>
+        </v-combobox>
+      </v-container>
+    </v-app>
     <div class="postContent">
       <div>
         <label for="title" />
@@ -34,28 +88,19 @@
           v-model="content"
         ></textarea>
       </div>
-      <div class="pfpContent flex">
-        <img
-          :src="imageUrl"
-          class="pfp"
-          alt="image de profil de l'utilisateur"
-          v-if="selectedFile"
-        />
-        <font-awesome-icon
-          icon="times"
-          class="icon close"
-          @click="removeFile()"
-          v-if="selectedFile"
-        />
-        <input
-          id="file"
-          class="fileInput"
-          type="file"
-          accept=".jpg, .jpeg, .png, .gif, .webp, .x-msvideo, .mp4, .mpeg, .ogg, .mp2t, .webm, 3gpp, 3gpp2"
-          @change="onFileSelected"
-        />
-        <label for="file"></label>
+      <div class="postPicture">
+        <v-file-input
+          prepend-icon="mdi-image-plus"
+          color="var(--orange)"
+          accept="image/jpg, image/jpeg, image/png, image/gif, video/x-msvideo, video/mp4, video/mpeg, video/ogg, video/mp2t, video/webm, video/3gpp, video/3gpp2"
+          @change="Preview_image"
+          v-model="image"
+        ></v-file-input>
+        <v-img :src="url" v-if="url"></v-img>
       </div>
+      <v-btn color="var(--orange)" elevation="1" outlined @click="createPost()"
+        >Post</v-btn
+      >
     </div>
   </div>
 </template>
@@ -66,10 +111,52 @@ import { mapGetters } from "vuex";
 export default {
   data() {
     return {
-      category: "",
+      activator: null,
+      attach: null,
+      colors: ["green", "purple", "indigo", "cyan", "teal", "orange"],
+      editing: null,
+      editingIndex: -1,
+      items: [
+        { header: "Selectionnez une categorie ou créez en une" },
+        {
+          text: "Animaux",
+          color: "blue",
+        },
+        {
+          text: "Musique",
+          color: "red",
+        },
+      ],
+      nonce: 1,
+      menu: false,
+      model: [],
+      x: 0,
+      search: null,
+      y: 0,
+
       title: "",
       content: "",
+      url: null,
+      image: null,
     };
+  },
+  watch: {
+    model(val, prev) {
+      if (val.length === prev.length) return;
+      this.model = val.map((v) => {
+        if (typeof v === "string") {
+          v = {
+            text: v,
+            color: this.colors[this.nonce - 1],
+          };
+          if (this.model.length < 6) this.items.push(v);
+
+          this.nonce++;
+        }
+
+        return v;
+      });
+    },
   },
   async created() {
     if (!this.isLoggedIn) await this.$router.push({ name: "Home" });
@@ -78,6 +165,60 @@ export default {
     ...mapGetters(["isLoggedIn"]),
   },
   methods: {
+    edit(index, item) {
+      if (!this.editing) {
+        this.editing = item;
+        this.editingIndex = index;
+      } else {
+        this.editing = null;
+        this.editingIndex = -1;
+      }
+    },
+    filter(item, queryText, itemText) {
+      if (item.header) return false;
+
+      const hasValue = (val) => (val != null ? val : "");
+
+      const text = hasValue(itemText);
+      const query = hasValue(queryText);
+
+      return (
+        text.toString().toLowerCase().indexOf(query.toString().toLowerCase()) >
+        -1
+      );
+    },
+    async createPost() {
+      console.log(JSON.stringify(this.model.text));
+      const post = {
+        title: this.title,
+        content: this.content,
+        category: this.model,
+      };
+      const formData = new FormData();
+      formData.append("image", this.image);
+      formData.append("post", JSON.stringify(post));
+      const settings = {
+        method: "POST",
+        credentials: "include",
+        body: formData,
+      };
+      try {
+        const fetchResponse = await fetch(
+          `${location.protocol}//${location.hostname}:3000/post`,
+          settings
+        );
+        const data = await fetchResponse.json();
+        alert(data.message);
+        // await this.$router.push({ name: "Home" });
+      } catch (error) {
+        console.log(error);
+        return;
+      }
+    },
+    Preview_image() {
+      if (!this.image) return (this.url = null);
+      this.url = URL.createObjectURL(this.image);
+    },
     autoResize(e) {
       e.target.style.height = "20px";
       e.target.style.height = `${e.target.scrollHeight}px`;
@@ -87,6 +228,12 @@ export default {
 </script>
 
 <style lang="sass" scoped>
+
+#tag
+  height: 120px
+
+#inspire
+  height: 80px
 
 textarea
   outline: none
@@ -99,11 +246,12 @@ textarea
   font-size: 16px
 
   &:focus
-    border: 1px solid black
+    border: 1px solid var(--orange)
 
 .newPost
   max-width: 70%
   margin: 52px auto 0 auto
+
 
 .titleContent
   margin-top: 72px
@@ -142,9 +290,11 @@ textarea
   background-color: white
   border-radius: 5px
   padding: 15px
+  z-index: 0
 
   > div
     position: relative
+    z-index: 0
 
 #title
   padding: 8px 68px 8px 16px
@@ -171,4 +321,7 @@ textarea
 
 #fileInput
   display: none
+
+.v-btn
+  margin-top: 20px
 </style>

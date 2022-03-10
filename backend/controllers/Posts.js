@@ -129,7 +129,7 @@ module.exports.createPost = async (req, res) => {
     title,
     content,
     category
-  } = req.body
+  } = JSON.parse(req.body.post)
   let attachmentURL
   if (!title || title.length <= 2 || !content || content.length <= 4)
     return res.status(400).json({
@@ -148,7 +148,7 @@ module.exports.createPost = async (req, res) => {
     if (!req.file)
       attachmentURL == null
     else
-      attachmentURL = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+      attachmentURL = `${req.protocol}://${req.get('host')}/pictures/${req.file.filename}`
     try {
       const newPost = await models.Post.create({
         title,
@@ -157,7 +157,7 @@ module.exports.createPost = async (req, res) => {
         attachment: attachmentURL,
         UserId: user.id
       })
-      res.status(201).json(newPost)
+      res.status(201).json({ 'message': 'Post is created' })
     } catch (error) {
       return res.status(500).json(error)
     }
@@ -193,7 +193,7 @@ module.exports.updatePost = async (req, res) => {
   if (!req.file)
     attachmentURL == null
   else
-    attachmentURL = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+    attachmentURL = `${req.protocol}://${req.get('host')}/pictures/${req.file.filename}`
   try {
     const post = await isCreator(req, res)
     if (!post)

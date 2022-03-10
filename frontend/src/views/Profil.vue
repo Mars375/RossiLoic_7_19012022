@@ -54,6 +54,7 @@
       <div v-for="(post, index) in posts" :key="post.id">
         {{ index + 1 }}
         <img :src="post.attachment" />
+        <!-- <video :src="post.attachment"/> -->
       </div>
     </div>
   </main>
@@ -189,9 +190,9 @@ main
   flex-direction: column
   width: 100%
   background-color: var(--salmon)
+  z-index: 1
 
   > .dropBackground
-    background-color: white
     width: 30px
     height: 30px
     border-radius: 30px
@@ -199,6 +200,7 @@ main
     position: absolute
     top: 210px
     right: 25px
+    z-index: 1
 
 .pfpContent 
   width: fit-content
@@ -312,4 +314,5 @@ p
   height: 30px
   width: 80px
   font-weight: bold
+
 </style>

@@ -179,6 +179,7 @@ header
   left: 0
   right: 0
   height: 52px
+  z-index: 2
 
 #logo
   height: 52px

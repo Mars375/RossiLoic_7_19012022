@@ -1,12 +1,19 @@
 <template>
   <div class="editContent">
-    <a class="editUser" @click="editUser = !editUser"> MODIFIER LES INFOS </a>
-    <div class="fondBackground" @click="editUser = false" v-if="editUser"></div>
-    <div id="update" v-if="editUser">
+    <v-btn color="white" outlined class="editUser" @click="overlay = !overlay">
+      MODIFIER LES INFOS
+    </v-btn>
+    <v-overlay
+      :absolute="absolute"
+      :value="overlay"
+      :z-index="zIndex"
+      @click="overlay = false"
+    ></v-overlay>
+    <div id="update" v-if="overlay">
       <form method="PUT" action="javascript:void(0)" autocomplete="off">
         <h2 class="flex">
           Modifier les infos
-          <font-awesome-icon icon="times" @click="editUser = false" />
+          <font-awesome-icon icon="times" @click="overlay = false" />
         </h2>
         <div class="pfpContent flex">
           <img
@@ -38,34 +45,39 @@
             <font-awesome-icon class="icon" icon="camera-retro"
           /></label>
         </div>
-        <div class="input-container">
-          <input
-            v-model="firstname"
-            type="text"
-            id="firstname"
-            name="firstname"
-            placeholder=" "
-            required
-          />
-          <label for="firstname" :class="{ warning: warning }" class="label"
-            >Prénom</label
-          >
-          <p class="alerte" v-if="regexpfirstname">{{ regexpfirstname }}</p>
-        </div>
-        <div class="input-container">
-          <input
-            type="text"
-            v-model="lastname"
-            id="lastname"
-            name="lastname"
-            placeholder=" "
-            required
-          />
-          <label for="lastname" :class="{ warning: warning }" class="label"
-            >Nom</label
-          >
-          <p class="alerte" v-if="regexplastname">{{ regexplastname }}</p>
-        </div>
+
+        <v-card-actions>
+          <div class="input-container">
+            <input
+              v-model="firstname"
+              type="text"
+              id="firstname"
+              name="firstname"
+              placeholder=" "
+              required
+            />
+            <label for="firstname" :class="{ warning: warning }" class="label"
+              >Prénom</label
+            >
+            <p class="alerte" v-if="regexpfirstname">
+              {{ regexpfirstname }}
+            </p>
+          </div>
+          <div class="input-container">
+            <input
+              type="text"
+              v-model="lastname"
+              id="lastname"
+              name="lastname"
+              placeholder=" "
+              required
+            />
+            <label for="lastname" :class="{ warning: warning }" class="label"
+              >Nom</label
+            >
+            <p class="alerte" v-if="regexplastname">{{ regexplastname }}</p>
+          </div>
+        </v-card-actions>
         <div class="input-container">
           <input
             type="text"
@@ -146,7 +158,9 @@ export default {
       checkpassword: "",
       username: "",
       selectedFile: null,
-      editUser: false,
+      absolute: true,
+      overlay: false,
+      zIndex: 1,
       user: {},
       show: true,
       warning: true,
@@ -298,6 +312,9 @@ export default {
 
 <style lang="sass" scoped>
 
+.v-card__actions
+  justify-content: space-around
+
 .fondBackground
   position: fixed
   background-color: rgba(0, 0, 0, .4)
@@ -305,13 +322,14 @@ export default {
   left: 0
   width: 100%
   height: 100%
+  z-index: 2
 
 .editContent
   display: flex
 
 .editUser
   background-color: transparent
-  position: fixed
+  position: absolute
   display: flex
   justify-content: center
   padding: 15px
@@ -369,20 +387,21 @@ h2
   font-weight: 500
   justify-content: space-between
   margin: 20px 43px
+  color: black
 
   > svg
     cursor: pointer
 
 #update
   position: fixed
-  top: 50%
+  top: 53%
   left: 50%
   transform: translate(-50%, -50%)
   -webkit-transform-style: preserve-3d
   transform-style: preserve-3d
-  z-index: 1
+  z-index: 2
   width: 100%
-  height: 100%
+  height: 94%
 
 form
   user-select: none
@@ -399,7 +418,7 @@ form
   -o-backface-visibility: hidden
   backface-visibility: hidden
   height: 100%
-  overflow: scroll
+  overflow: auto
 
   > p
     display: flex

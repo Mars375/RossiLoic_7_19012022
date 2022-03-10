@@ -1,10 +1,6 @@
 <template>
   <div>
-    <font-awesome-icon
-      class="icon"
-      icon="camera-retro"
-      @click="uploadBg = !uploadBg"
-    />
+    <v-btn icon @click="uploadBg = !uploadBg"><v-icon color="var(--orange)">mdi-camera-plus</v-icon></v-btn>
     <div class="fondBackground" @click="uploadBg = false" v-if="uploadBg"></div>
     <div class="layer" v-if="uploadBg">
       <div class="flex header">
@@ -93,6 +89,10 @@ export default {
 </script>
 
 <style lang="sass" scoped>
+
+.v-btn
+  background-color: white
+  border: 1px solid var(--lightblack)
 div
   user-select: none
 
