@@ -1,14 +1,68 @@
 <template>
   <v-main class="home">
-    <v-container>
+    <v-container height="1400px">
       <CreatePost v-if="isLoggedIn" />
-      <v-skeleton-loader>
-        <div v-for="(post, index) in posts" :key="post.id">
-          {{ index + 1 }}
-          <img :src="post.attachment" />
-          <video :src="post.attachment" />
-        </div>
-      </v-skeleton-loader>
+      <v-container v-if="loading">
+        <v-skeleton-loader
+          :loading="loading"
+          v-bind="attrs"
+          type="list-item-avatar-two-line, image, article"
+          v-for="post in posts"
+          :key="post.id"
+          max-width="602"
+        >
+        </v-skeleton-loader>
+      </v-container>
+      <v-container v-else>
+        <v-card
+          max-width="602"
+          class="mb-16"
+          v-for="post in posts"
+          :key="post.id"
+        >
+          <v-col class="pa-0">
+            <v-card-actions>
+              <v-list-item-avatar>
+                <v-img
+                  :src="users.find((user) => user.id === post.UserId).picture"
+                ></v-img>
+              </v-list-item-avatar>
+              <v-list-item two-line class="pa-0">
+                <v-list-item-content class="d-block">
+                  <v-list-item-title
+                    >{{
+                      users.find((user) => user.id === post.UserId).firstname
+                    }}
+                    {{
+                      users.find((user) => user.id === post.UserId).lastname
+                    }}</v-list-item-title
+                  >
+                  <v-list-item-subtitle>{{
+                    users.find((user) => user.id === post.UserId).username
+                  }}</v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
+            </v-card-actions>
+            <v-card-title> {{ post.title }} </v-card-title>
+            <v-img
+              :lazy-src="post.attachment"
+              max-height="300px"
+              aspect-ratio="1.4"
+              contain
+              dark
+              v-if="isImage(post.attachment)"
+            />
+            <video
+              width="100%"
+              :src="post.attachment"
+              controls
+              autoplay="autoplay"
+              v-else
+            ></video>
+            <v-card-text> {{ post.content }} </v-card-text>
+          </v-col>
+        </v-card>
+      </v-container>
     </v-container>
   </v-main>
 </template>
@@ -20,8 +74,16 @@ import CreatePost from "../components/CreatePost.vue";
 export default {
   data() {
     return {
+      loading: true,
       postContent: "",
-      posts: {},
+      posts: [],
+      users: [],
+      fileextension: ["jpg", "jpeg", "png", "gif", "webp"],
+
+      attrs: {
+        class: "mb-6",
+        elevation: 2,
+      },
     };
   },
   name: "Home",
@@ -32,26 +94,43 @@ export default {
     ...mapGetters(["isLoggedIn"]),
     ...mapState({ user: "user" }),
   },
-  method: {},
-  async created() {
-    async () => {
-      try {
-        const response = await fetch(
-          `${location.protocol}//${location.hostname}:3000/post`
-        );
-        this.posts = await response.json();
-        console.log(this.posts);
-        this.posts = this.posts.posts
-      } catch (error) {
-        console.log(error);
+  methods: {
+    isImage(postFile) {
+      return this.fileextension.includes(postFile.split(".").pop());
+    },
+  },
+  async mounted() {
+    try {
+      const response = await fetch(
+        `${location.protocol}//${location.hostname}:3000/post`
+      );
+      this.posts = await response.json();
+      this.posts = this.posts.posts;
+      for (const post of this.posts) {
+        if (!this.users.find((user) => user.id == post.UserId)) {
+          const response = await fetch(
+            `${location.protocol}//${location.hostname}:3000/user/${post.UserId}`
+          );
+          if (response.ok) {
+            const user = await response.json();
+            this.users.push(user);
+          }
+        }
       }
-    };
-    // this.$watch(() => this.$route.params, this.initData);
+      this.loading = false;
+    } catch (error) {
+      console.error(error);
+    }
   },
 };
 </script>
 
 <style lang="sass" scoped>
+img
+  fit-content: cover
+.v-list-item__content
+  width: fit-content
+  flex: none
 
 .home
   width: 100%

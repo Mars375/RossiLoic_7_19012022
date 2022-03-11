@@ -46,7 +46,7 @@ module.exports.getOneUser = async (req, res) => {
       attributes: {
         exclude: [
           'password',
-          'id',
+          'email',
           'isAdmin'
         ],
       },

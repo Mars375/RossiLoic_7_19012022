@@ -66,42 +66,45 @@
           </template>
         </v-combobox>
       </v-container>
-    </v-app>
-    <div class="postContent">
-      <div>
-        <v-text-field
-          v-model="title"
-          :rules="[rules.required, rules.counter, rules.minima]"
-          label="Title"
-          counter
-          maxlength="255"
-          clearable
-          hide-details="auto"
-        ></v-text-field>
-      </div>
-      <div>
-        <label for="content" />
-        <textarea
-          placeholder="Texte (optionnel)"
-          id="content"
-          @input="autoResize($event)"
-          v-model="content"
-        ></textarea>
-      </div>
-      <div class="postPicture">
-        <v-file-input
-          prepend-icon="mdi-image-plus"
+      <div class="postContent">
+        <div>
+          <v-text-field
+            class="app-text-field"
+            v-model="title"
+            :rules="[rules.required, rules.counter, rules.minima]"
+            label="Title"
+            counter
+            maxlength="255"
+            clearable
+            hide-details="auto"
+          ></v-text-field>
+        </div>
+        <div>
+          <v-textarea v-model="content" id="content" auto-grow counter clearable>
+            <template v-slot:label>
+              <div>Bio <small>(optional)</small></div>
+            </template>
+          </v-textarea>
+        </div>
+        <div class="postPicture">
+          <v-file-input
+            prepend-icon="mdi-image-plus"
+            color="var(--orange)"
+            accept="image/jpg, image/jpeg, image/png, image/gif, video/x-msvideo, video/mp4, video/mpeg, video/ogg, video/mp2t, video/webm, video/3gpp, video/3gpp2"
+            @change="Preview_image"
+            v-model="image"
+          ></v-file-input>
+          <v-img :src="url" v-if="url"></v-img>
+        </div>
+        <v-btn
           color="var(--orange)"
-          accept="image/jpg, image/jpeg, image/png, image/gif, video/x-msvideo, video/mp4, video/mpeg, video/ogg, video/mp2t, video/webm, video/3gpp, video/3gpp2"
-          @change="Preview_image"
-          v-model="image"
-        ></v-file-input>
-        <v-img :src="url" v-if="url"></v-img>
+          elevation="1"
+          outlined
+          @click="createPost()"
+          >Post</v-btn
+        >
       </div>
-      <v-btn color="var(--orange)" elevation="1" outlined @click="createPost()"
-        >Post</v-btn
-      >
-    </div>
+    </v-app>
   </div>
 </template>
 
@@ -142,7 +145,7 @@ export default {
       rules: {
         required: (value) => !!value || "Required.",
         counter: (value) => value.length <= 255 || "Max 255 characters",
-        minima: (value) => value.length >= 2 || "Min 2 characters"
+        minima: (value) => value.length >= 2 || "Min 2 characters",
       },
     };
   },
@@ -198,6 +201,8 @@ export default {
         title: this.title,
         content: this.content,
       };
+      if(!this.model.length)
+        return console.error('Aucune categorie selectionner');
       const formData = new FormData();
       formData.append("image", this.image);
       formData.append("post", JSON.stringify(post));
@@ -226,10 +231,6 @@ export default {
     Preview_image() {
       if (!this.image) return (this.url = null);
       this.url = URL.createObjectURL(this.image);
-    },
-    autoResize(e) {
-      e.target.style.height = "20px";
-      e.target.style.height = `${e.target.scrollHeight}px`;
     },
   },
 };

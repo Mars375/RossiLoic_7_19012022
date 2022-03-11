@@ -34,7 +34,7 @@ module.exports.getAllPosts = async (req, res) => {
     const posts = await models.Post.findAll({
       include: [{
           model: models.User,
-          attributes: ['username'],
+          attributes: ['username', 'picture'],
         },
         {
           model: models.Comment,
@@ -131,7 +131,7 @@ module.exports.createPost = async (req, res) => {
   } = JSON.parse(req.body.post)
   const { category } = req.body
   let attachmentURL
-  if (!title || title.length <= 2)
+  if (!title || title.length <= 2 || !category)
     return res.status(400).json({
       'error': 'invalid parameters'
     })
