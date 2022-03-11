@@ -128,10 +128,10 @@ module.exports.createPost = async (req, res) => {
   const {
     title,
     content,
-    category
   } = JSON.parse(req.body.post)
+  const { category } = req.body
   let attachmentURL
-  if (!title || title.length <= 2 || !content || content.length <= 4)
+  if (!title || title.length <= 2)
     return res.status(400).json({
       'error': 'invalid parameters'
     })
@@ -150,7 +150,7 @@ module.exports.createPost = async (req, res) => {
     else
       attachmentURL = `${req.protocol}://${req.get('host')}/pictures/${req.file.filename}`
     try {
-      const newPost = await models.Post.create({
+      await models.Post.create({
         title,
         content,
         category,

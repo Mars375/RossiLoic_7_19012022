@@ -69,15 +69,15 @@
     </v-app>
     <div class="postContent">
       <div>
-        <label for="title" />
-        <textarea
-          maxlength="255"
-          placeholder="Titre"
-          id="title"
+        <v-text-field
           v-model="title"
-          @input="autoResize($event)"
-        ></textarea>
-        <div class="nbLetter">{{ title.length }} / 255</div>
+          :rules="[rules.required, rules.counter, rules.minima]"
+          label="Title"
+          counter
+          maxlength="255"
+          clearable
+          hide-details="auto"
+        ></v-text-field>
       </div>
       <div>
         <label for="content" />
@@ -138,6 +138,12 @@ export default {
       content: "",
       url: null,
       image: null,
+
+      rules: {
+        required: (value) => !!value || "Required.",
+        counter: (value) => value.length <= 255 || "Max 255 characters",
+        minima: (value) => value.length >= 2 || "Min 2 characters"
+      },
     };
   },
   watch: {
@@ -188,15 +194,17 @@ export default {
       );
     },
     async createPost() {
-      console.log(JSON.stringify(this.model.text));
       const post = {
         title: this.title,
         content: this.content,
-        category: this.model,
       };
       const formData = new FormData();
       formData.append("image", this.image);
       formData.append("post", JSON.stringify(post));
+      formData.append(
+        "category",
+        this.model.map((e) => (e = e.text)).join(";")
+      );
       const settings = {
         method: "POST",
         credentials: "include",
@@ -209,7 +217,7 @@ export default {
         );
         const data = await fetchResponse.json();
         alert(data.message);
-        // await this.$router.push({ name: "Home" });
+        await this.$router.push({ name: "Home" });
       } catch (error) {
         console.log(error);
         return;
