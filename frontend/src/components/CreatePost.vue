@@ -24,7 +24,6 @@ export default {
 .createPost
   width: 100%
   justify-content: center
-  margin-top: 20px
   align-items: center
 
 .button

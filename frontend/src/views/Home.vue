@@ -1,6 +1,6 @@
 <template>
   <v-main class="home">
-    <v-container height="1400px">
+    <v-container class="pa-0 mt-4">
       <CreatePost v-if="isLoggedIn" />
       <v-container v-if="loading">
         <v-skeleton-loader
@@ -13,10 +13,10 @@
         >
         </v-skeleton-loader>
       </v-container>
-      <v-container v-else>
+      <v-container v-else class="pa-0 mt-4">
         <v-card
           max-width="602"
-          class="mb-16"
+          class="mb-8 mx-auto"
           v-for="post in posts"
           :key="post.id"
         >
@@ -42,25 +42,37 @@
                   }}</v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
+              <v-menu offset-y>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn dark icon v-bind="attrs" v-on="on">
+                    <v-icon color="button">mdi-dots-horizontal</v-icon>
+                  </v-btn>
+                </template>
+                <v-list>
+                  <v-list-item>
+                    <v-list-item-title class="d-flex" @click="post.editing = true && $forceUpdate()"
+                      >Modifier le Post</v-list-item-title
+                    >
+                  </v-list-item>
+                  <v-divider width="90%" class="ma-auto"></v-divider>
+                  <v-list-item>
+                    <v-list-item-title>Supprimer le Post</v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
             </v-card-actions>
-            <v-card-title> {{ post.title }} </v-card-title>
             <v-img
-              :lazy-src="post.attachment"
+              :src="post.attachment"
               max-height="300px"
-              aspect-ratio="1.4"
               contain
               dark
               v-if="isImage(post.attachment)"
             />
-            <video
-              width="100%"
-              :src="post.attachment"
-              controls
-              autoplay="autoplay"
-              v-else
-            ></video>
+            <video width="100%" :src="post.attachment" controls v-else></video>
+            <v-card-title> {{ post.title }} </v-card-title>
             <v-card-text> {{ post.content }} </v-card-text>
           </v-col>
+          <EditPost v-if="post.editing" :post="post" :user="users.find((user) => user.id === post.UserId)"/>
         </v-card>
       </v-container>
     </v-container>
@@ -71,9 +83,12 @@
 // @ is an alias to /src
 import { mapState, mapGetters } from "vuex";
 import CreatePost from "../components/CreatePost.vue";
+import EditPost from "../components/EditPost.vue";
+
 export default {
   data() {
     return {
+      postEditing: false,
       loading: true,
       postContent: "",
       posts: [],
@@ -89,6 +104,7 @@ export default {
   name: "Home",
   components: {
     CreatePost,
+    EditPost,
   },
   computed: {
     ...mapGetters(["isLoggedIn"]),

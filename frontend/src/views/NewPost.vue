@@ -12,7 +12,7 @@
           :items="items"
           :search-input.sync="search"
           hide-selected
-          label="Search for an option"
+          label="Choisissez une catégorie"
           multiple
           small-chips
           solo
@@ -258,8 +258,9 @@ textarea
     border: 1px solid var(--orange)
 
 .newPost
-  max-width: 70%
-  margin: 52px auto 0 auto
+  width: 95%
+  max-width: 700px
+  margin: 20px auto 
 
 
 .titleContent
