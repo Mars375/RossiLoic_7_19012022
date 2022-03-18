@@ -69,7 +69,8 @@
       <div class="postContent">
         <div>
           <v-text-field
-            class="app-text-field"
+            color="input"
+            class="app-text-field ma-auto mb-4"
             v-model="title"
             :rules="[rules.required, rules.counter, rules.minima]"
             label="Title"
@@ -80,9 +81,16 @@
           ></v-text-field>
         </div>
         <div>
-          <v-textarea v-model="content" id="content" auto-grow counter clearable>
+          <v-textarea
+            v-model="content"
+            id="content"
+            auto-grow
+            counter
+            clearable
+            color="input"
+          >
             <template v-slot:label>
-              <div>Bio <small>(optional)</small></div>
+              <div>Que voulez-vous dire ? <small>(optionnel)</small></div>
             </template>
           </v-textarea>
         </div>
@@ -94,7 +102,19 @@
             @change="Preview_image"
             v-model="image"
           ></v-file-input>
-          <v-img :src="url" v-if="url"></v-img>
+          <v-img
+            contain
+            max-height="300px"
+            :src="url"
+            v-if="url && isImage(this.image.name)"
+          ></v-img>
+          <video
+            height="300px"
+            width="500px"
+            :src="url"
+            controls
+            v-else-if="url"
+          ></video>
         </div>
         <v-btn
           color="var(--orange)"
@@ -130,6 +150,7 @@ export default {
           color: "red",
         },
       ],
+      fileextension: ["jpg", "jpeg", "png", "gif", "webp"],
       nonce: 1,
       menu: false,
       model: [],
@@ -183,6 +204,9 @@ export default {
         this.editingIndex = -1;
       }
     },
+    isImage(file) {
+      return this.fileextension.includes(file.split(".").pop());
+    },
     filter(item, queryText, itemText) {
       if (item.header) return false;
 
@@ -201,8 +225,8 @@ export default {
         title: this.title,
         content: this.content,
       };
-      if(!this.model.length)
-        return console.error('Aucune categorie selectionner');
+      if (!this.model.length)
+        return console.error("Aucune categorie selectionner");
       const formData = new FormData();
       formData.append("image", this.image);
       formData.append("post", JSON.stringify(post));
@@ -260,7 +284,7 @@ textarea
 .newPost
   width: 95%
   max-width: 700px
-  margin: 20px auto 
+  margin: 20px auto
 
 
 .titleContent

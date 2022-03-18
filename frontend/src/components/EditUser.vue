@@ -218,6 +218,7 @@ export default {
       this.selectedFile = null;
     },
     onFileSelected(event) {
+      console.log(event.target.files);
       this.selectedFile = event.target.files[0];
       var urlCreator = window.URL || window.webkitURL;
       this.imageUrl = urlCreator.createObjectURL(this.selectedFile);

@@ -14,66 +14,9 @@
         </v-skeleton-loader>
       </v-container>
       <v-container v-else class="pa-0 mt-4">
-        <v-card
-          max-width="602"
-          class="mb-8 mx-auto"
-          v-for="post in posts"
-          :key="post.id"
-        >
-          <v-col class="pa-0">
-            <v-card-actions>
-              <v-list-item-avatar>
-                <v-img
-                  :src="users.find((user) => user.id === post.UserId).picture"
-                ></v-img>
-              </v-list-item-avatar>
-              <v-list-item two-line class="pa-0">
-                <v-list-item-content class="d-block">
-                  <v-list-item-title
-                    >{{
-                      users.find((user) => user.id === post.UserId).firstname
-                    }}
-                    {{
-                      users.find((user) => user.id === post.UserId).lastname
-                    }}</v-list-item-title
-                  >
-                  <v-list-item-subtitle>{{
-                    users.find((user) => user.id === post.UserId).username
-                  }}</v-list-item-subtitle>
-                </v-list-item-content>
-              </v-list-item>
-              <v-menu offset-y>
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn dark icon v-bind="attrs" v-on="on">
-                    <v-icon color="button">mdi-dots-horizontal</v-icon>
-                  </v-btn>
-                </template>
-                <v-list>
-                  <v-list-item>
-                    <v-list-item-title class="d-flex" @click="post.editing = true && $forceUpdate()"
-                      >Modifier le Post</v-list-item-title
-                    >
-                  </v-list-item>
-                  <v-divider width="90%" class="ma-auto"></v-divider>
-                  <v-list-item>
-                    <v-list-item-title>Supprimer le Post</v-list-item-title>
-                  </v-list-item>
-                </v-list>
-              </v-menu>
-            </v-card-actions>
-            <v-img
-              :src="post.attachment"
-              max-height="300px"
-              contain
-              dark
-              v-if="isImage(post.attachment)"
-            />
-            <video width="100%" :src="post.attachment" controls v-else></video>
-            <v-card-title> {{ post.title }} </v-card-title>
-            <v-card-text> {{ post.content }} </v-card-text>
-          </v-col>
-          <EditPost v-if="post.editing" :post="post" :user="users.find((user) => user.id === post.UserId)"/>
-        </v-card>
+        <Post v-for="post in posts" :key="post.id" :post="post" :users="users">
+          <Comment v-for="comment in post.Comments" :key="comment.id" :post="post" />
+        </Post>
       </v-container>
     </v-container>
   </v-main>
@@ -83,14 +26,13 @@
 // @ is an alias to /src
 import { mapState, mapGetters } from "vuex";
 import CreatePost from "../components/CreatePost.vue";
-import EditPost from "../components/EditPost.vue";
+import Post from "../components/Post.vue";
+import Comment from "../components/Comment.vue";
 
 export default {
   data() {
     return {
-      postEditing: false,
       loading: true,
-      postContent: "",
       posts: [],
       users: [],
       fileextension: ["jpg", "jpeg", "png", "gif", "webp"],
@@ -104,7 +46,8 @@ export default {
   name: "Home",
   components: {
     CreatePost,
-    EditPost,
+    Post,
+    Comment,
   },
   computed: {
     ...mapGetters(["isLoggedIn"]),
@@ -122,6 +65,7 @@ export default {
       );
       this.posts = await response.json();
       this.posts = this.posts.posts;
+      console.log(this.posts);
       for (const post of this.posts) {
         if (!this.users.find((user) => user.id == post.UserId)) {
           const response = await fetch(
@@ -144,9 +88,6 @@ export default {
 <style lang="sass" scoped>
 img
   fit-content: cover
-.v-list-item__content
-  width: fit-content
-  flex: none
 
 .home
   width: 100%

@@ -45,6 +45,7 @@ export default {
 .icon
   font-size: 20px
   vertical-align: middle
+  cursor: pointer
 
   &:active
     color: var(--orange)

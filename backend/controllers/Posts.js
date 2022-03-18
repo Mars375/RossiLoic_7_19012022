@@ -170,13 +170,14 @@ module.exports.updatePost = async (req, res) => {
   const {
     title,
     content,
-    category
-  } = req.body
+  } = JSON.parse(req.body.post)
   let attachmentURL
-  if (!title || title.length <= 2 || !content || content.length <= 4)
+  if (!title || title.length <= 2) {
     return res.status(400).json({
       'error': 'invalid parameters'
     })
+    
+  }
   try {
     const user = await models.User.findOne({
       attributes: ['id', 'email', 'username'],
@@ -201,14 +202,13 @@ module.exports.updatePost = async (req, res) => {
     post.set({
       title: title || post.title,
       content: content || post.content,
-      category: category || post.category,
       attachment: attachmentURL,
       UserId: post.UserId
     })
     try {
       await post.save()
       return res.status(200).json({
-        post
+        'message': 'Ce post a été mis à jour'
       })
     } catch (error) {
       return res.status(500).json({

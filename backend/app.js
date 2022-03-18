@@ -32,7 +32,6 @@ app.use('/pictures', express.static(path.join(__dirname, 'pictures')))
 app.get('/jwtid', checkUser, requireAuth, (req, res) => {
   res.status(200).send(res.locals.user.id.toString())
 })
-
 // routes
 app.use('/auth', authRoutes)
 app.use('/user', userRoutes)
