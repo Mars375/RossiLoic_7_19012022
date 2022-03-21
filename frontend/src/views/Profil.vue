@@ -51,8 +51,7 @@
       </article>
     </section>
     <div class="posts" v-if="loaded">
-      <div v-for="(post, index) in posts" :key="post.id">
-        {{ index + 1 }}
+      <div v-for="post in posts" :key="post.id">
         <img :src="post.attachment" />
         <!-- <video :src="post.attachment"/> -->
       </div>

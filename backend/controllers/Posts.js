@@ -38,7 +38,7 @@ module.exports.getAllPosts = async (req, res) => {
         },
         {
           model: models.Comment,
-          attributes: ['content']
+          attributes: ['content', 'userId', 'createdAt', 'id']
         }
       ],
       order: [
@@ -62,17 +62,16 @@ module.exports.getAllPosts = async (req, res) => {
 module.exports.getPostOfUser = async (req, res) => {
   try {
     const posts = await models.Post.findAll({
-      raw: true,
       where: {
         UserId: req.params.user_id
       },
       include: [{
         model: models.User,
-        attributes: ['username']
+        attributes: ['username', 'picture']
       },
       {
         model: models.Comment,
-        attributes: ['content']
+        attributes: ['content', 'userId']
       }],
       order: [
         ['createdAt', 'DESC']
@@ -82,6 +81,7 @@ module.exports.getPostOfUser = async (req, res) => {
       return res.status(404).json({
         'error': 'Post not found'
       })
+      console.log(posts);
     res.status(200).json({
       posts
     })

@@ -15,7 +15,11 @@
       </v-container>
       <v-container v-else class="pa-0 mt-4">
         <Post v-for="post in posts" :key="post.id" :post="post" :users="users">
-          <Comment v-for="comment in post.Comments" :key="comment.id" :post="post" />
+          <Comment
+            v-for="comment in post.Comments"
+            :key="comment.id"
+            :post="post"
+          />
         </Post>
       </v-container>
     </v-container>
@@ -27,7 +31,6 @@
 import { mapState, mapGetters } from "vuex";
 import CreatePost from "../components/CreatePost.vue";
 import Post from "../components/Post.vue";
-import Comment from "../components/Comment.vue";
 
 export default {
   data() {
@@ -47,7 +50,6 @@ export default {
   components: {
     CreatePost,
     Post,
-    Comment,
   },
   computed: {
     ...mapGetters(["isLoggedIn"]),
@@ -65,18 +67,14 @@ export default {
       );
       this.posts = await response.json();
       this.posts = this.posts.posts;
-      console.log(this.posts);
-      for (const post of this.posts) {
-        if (!this.users.find((user) => user.id == post.UserId)) {
-          const response = await fetch(
-            `${location.protocol}//${location.hostname}:3000/user/${post.UserId}`
-          );
-          if (response.ok) {
-            const user = await response.json();
-            this.users.push(user);
-          }
-        }
-      }
+    } catch (error) {
+      console.error(error);
+    }
+    try {
+      const fetchResponse = await fetch(
+        `${location.protocol}//${location.hostname}:3000/user/`
+      );
+      if (fetchResponse.ok) this.users = await fetchResponse.json();
       this.loading = false;
     } catch (error) {
       console.error(error);
