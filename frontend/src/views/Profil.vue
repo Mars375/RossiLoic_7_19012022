@@ -6,7 +6,7 @@
         class="backgroundImg"
         alt="image d'arrière plan de l'utilisateur"
       />
-      <DropBackground v-if="isLoggedIn" class="dropBackground" />
+      <DropBackground v-if="(isLoggedIn) && ((user.id == $route.params.id) || (user.admin == true))" class="dropBackground" />
       <div class="pfpContent">
         <img
           :src="profil.picture"
@@ -29,7 +29,9 @@
         Follow
       </button>
       <article id="idCard">
-        <div class="cardHeader flex"><h2 class="name">{{ profil.firstname }} {{ profil.lastname }}</h2></div>
+        <div class="cardHeader flex">
+          <h2 class="name">{{ profil.firstname }} {{ profil.lastname }}</h2>
+        </div>
         <p>@{{ profil.username }}</p>
         <div class="flex createdAt">
           <font-awesome-icon class="icon calendar" icon="calendar-alt" /><span>
@@ -47,15 +49,31 @@
           >
         </div>
         <p class="bioUser">{{ profil.bio }} 🥜</p>
-        <EditUser v-if="isLoggedIn" />
+        <EditUser v-if="(isLoggedIn) && ((user.id == $route.params.id) || (user.admin == true))" />
       </article>
     </section>
-    <div class="posts" v-if="loaded">
-      <div v-for="post in posts" :key="post.id">
-        <img :src="post.attachment" />
-        <!-- <video :src="post.attachment"/> -->
-      </div>
-    </div>
+    <v-container class="pa-0 mt-4">
+      <CreatePost v-if="isLoggedIn" />
+      <v-container v-if="loading">
+        <v-skeleton-loader
+          :loading="loading"
+          v-bind="attrs"
+          type="list-item-avatar-two-line, image, article"
+          v-for="post in posts"
+          :key="post.id"
+          max-width="602"
+        >
+        </v-skeleton-loader>
+      </v-container>
+      <v-container v-else class="pa-0 mt-4">
+        <Post
+          v-for="post in posts"
+          :key="post.id"
+          :post="post"
+          :users="users"
+        />
+      </v-container>
+    </v-container>
   </main>
 </template>
 
@@ -63,12 +81,15 @@
 import { mapState, mapGetters } from "vuex";
 import DropBackground from "../components/DropBackground.vue";
 import EditUser from "../components/EditUser.vue";
+import Post from "../components/Post.vue";
+import CreatePost from "../components/CreatePost.vue"
 import { mixin as clickaway } from "vue-clickaway";
 
 export default {
   mixins: [clickaway],
   data() {
     return {
+      loading: true,
       popup: false,
       profil: {},
       posts: {},
@@ -78,6 +99,11 @@ export default {
       followProfil: {
         userFollower: [],
         userFollowing: [],
+      },
+
+      attrs: {
+        class: "mb-6",
+        elevation: 2,
       },
       settings: {
         method: "PATCH",
@@ -90,6 +116,8 @@ export default {
   components: {
     DropBackground,
     EditUser,
+    Post,
+    CreatePost,
   },
   computed: {
     ...mapState({ user: "user" }),
@@ -145,6 +173,14 @@ export default {
         console.log(error);
       }
       try {
+        const fetchResponse = await fetch(
+          `${location.protocol}//${location.hostname}:3000/user/`
+        );
+        if (fetchResponse.ok) this.users = await fetchResponse.json();
+      } catch (error) {
+        console.error(error);
+      }
+      try {
         const response = await fetch(
           `${location.protocol}//${location.hostname}:3000/post/user/${this.$route.params.id}`
         );
@@ -159,6 +195,7 @@ export default {
         );
         this.followProfil = await response.json();
         this.loaded = true;
+        this.loading = false
       } catch (error) {
         console.log(error);
       }
@@ -201,13 +238,13 @@ main
     right: 25px
     z-index: 1
 
-.pfpContent 
+.pfpContent
   width: fit-content
   align-self: center
   height: 150px
   margin-top: -40px
 
-p 
+p
   font-size: 12px
 
 .createdAt
@@ -313,5 +350,4 @@ p
   height: 30px
   width: 80px
   font-weight: bold
-
 </style>

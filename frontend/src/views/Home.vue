@@ -14,13 +14,7 @@
         </v-skeleton-loader>
       </v-container>
       <v-container v-else class="pa-0 mt-4">
-        <Post v-for="post in posts" :key="post.id" :post="post" :users="users">
-          <Comment
-            v-for="comment in post.Comments"
-            :key="comment.id"
-            :post="post"
-          />
-        </Post>
+        <Post v-for="post in posts" :key="post.id" :post="post" :users="users"/>
       </v-container>
     </v-container>
   </v-main>
@@ -61,6 +55,16 @@ export default {
     },
   },
   async mounted() {
+    if (this.user) {
+      setTimeout(() => {
+        for (const post of this.posts) {
+          if (post.Users.find((user) => this.user.id == user.Like.userId)) {
+            const likes = document.querySelector(`#likeBtn${post.id}`);
+            likes.setAttribute("style", "color: var(--orange) !important");
+          }
+        }
+      }, 700);
+    }
     try {
       const response = await fetch(
         `${location.protocol}//${location.hostname}:3000/post`

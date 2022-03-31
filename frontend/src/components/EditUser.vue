@@ -1,6 +1,6 @@
 <template>
   <div class="editContent">
-    <v-btn color="white" outlined class="editUser" @click="overlay = !overlay">
+    <v-btn color="button" outlined class="editUser" @click="overlay = !overlay">
       MODIFIER LES INFOS
     </v-btn>
     <v-overlay
@@ -135,8 +135,10 @@
             >Bio</label
           >
         </div>
-        <button @click="submit()" class="submit">Appliquer</button>
-        <button @click="deleteUser()" class="submit remove">Supprimer</button>
+        <v-col class="d-flex flex-column align-center">
+          <v-btn @click="submit()" color="button" class="submit my-3">Appliquer</v-btn>
+          <v-btn @click="deleteUser()" color="button" class="submit">Supprimer</v-btn>
+        </v-col>
       </form>
     </div>
   </div>
@@ -329,14 +331,7 @@ export default {
   display: flex
 
 .editUser
-  background-color: transparent
   position: absolute
-  display: flex
-  justify-content: center
-  padding: 15px
-  border: 1px solid var(--lightblack)
-  color: var(--orange)
-  font-weight: bold
 
 .pfpContent
   height: 150px
@@ -455,20 +450,8 @@ input[type="text"], input[type="password"], input[type="email"], textarea
   resize: none
 
 .submit
-  background-color: red
-  border-radius: 12px
-  border: 0
-  box-sizing: border-box
   color: #eee
-  cursor: pointer
-  font-size: 18px
-  height: 50px
   width: 80%
-  margin-top: 30px
-  align-self: center
-
-  &:active, &:hover
-    filter: brightness(120%)
 
 .label
   color: #65657b
@@ -519,9 +502,6 @@ input:not(:placeholder-shown) ~ .label.warning
   right: 60px
   cursor: pointer
 
-.remove
-  margin-bottom: 10px
-
 @media screen and (min-width: 615px)
 
   h2
@@ -534,7 +514,4 @@ input:not(:placeholder-shown) ~ .label.warning
   form
     height: fit-content
     border-radius: 20px
-
-  .submit
-    margin: 20px 0
 </style>

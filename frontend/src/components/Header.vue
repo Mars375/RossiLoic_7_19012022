@@ -27,28 +27,35 @@
       <input type="search" placeholder="Rechercher" />
     </form>
     <div id="nav">
-      <a
-        class="signup"
+      <v-btn
+        small
+        outlined
+        color="button"
+        class="signup mx-1"
         :class="{ active: signup && !login }"
+        v-if="!isLoggedIn"
         @click="(signup = !signup) && (login = false)"
-        v-if="!isLoggedIn"
-        >S'inscrire</a
+        >S'inscrire</v-btn
       >
-      <a
-        class="login"
+      <v-btn
+        small
+        color="button"
+        class="login mx-1"
         :class="{ active: signup && login }"
+        v-if="!isLoggedIn"
         @click="(login = true) && (signup = true)"
-        v-if="!isLoggedIn"
-        >Se connecter</a
+        >Se connecter</v-btn
       >
-      <a
-        class="login"
+      <v-btn
+        small
+        color="button"
+        class="mx-1 login"
         :class="{ active: signup && login }"
-        @click="logout()"
         v-if="isLoggedIn"
-        >Deconnexion</a
+        @click="logout()"
+        >Déconnexion</v-btn
       >
-      <div class="user" v-if="user">{{ user.username }}</div>
+      <div class="user mx-2 text-truncate" v-if="user">{{ user.username }}</div>
       <a
         class="menu"
         v-on-clickaway="awayDropdown"
@@ -134,7 +141,10 @@ export default {
         },
       };
       try {
-        await fetch(`${location.protocol}//${location.hostname}:3000/auth/logout`, settings);
+        await fetch(
+          `${location.protocol}//${location.hostname}:3000/auth/logout`,
+          settings
+        );
       } catch (error) {
         console.log(error);
       }
@@ -214,7 +224,7 @@ input
   align-self: center
   width: 100%
   height: 52px
-  padding: 4px 0 4px 4px 
+  padding: 4px 0 4px 4px
 
 .home
   height: 52px
@@ -229,11 +239,9 @@ input
   display: flex
   user-select: none
   cursor: pointer
-  font-weight: bold
-  color: #2c3e50
 
   &.active
-    color: var(--salmon)
+    color: var(--orange)
 
     & > .chevrondown
       transition-duration: .5s
@@ -254,27 +262,14 @@ input
 @media screen and (min-width: 615px)
 
   #nav
-    width: 250px
-    margin-right: 5px
+    width: 300px
 
   .signup
     display: inherit
-    border: 1px solid var(--orange)
-    color: var(--orange)
-    padding: 8px
-    border-radius: 15px
-    margin-right: 5px
-    cursor: pointer
 
   .login
     display: inherit
-    border: 1px solid var(--orange)
-    background-color: var(--orange)
-    color: white
-    padding: 8px
-    border-radius: 15px
-    margin-right: 5px
-    cursor: pointer
+    color: white !important
 
   .login, .signup
     &.active, &:hover
@@ -282,6 +277,13 @@ input
 
   .user
     display: inherit
+
+  .searchbar
+    flex-grow: .6
+
+@media screen and (min-width: 615px) and (max-width: 700px)
+  .searchbar
+    flex-grow: .1
 
 @media screen and (min-width: 1070px)
 

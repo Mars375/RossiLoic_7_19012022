@@ -19,6 +19,11 @@ const routes = [
     component: () => import('../views/Profil.vue'),
   },
   {
+    path: '/post/:postId',
+    name: 'OnePost',
+    component: () => import('../views/OnePost.vue'),
+  },
+  {
     path: '/profil/:id/follower',
     name: 'Follower',
     component: () => import('../views/Follower.vue')

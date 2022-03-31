@@ -25,13 +25,13 @@ export default {
   --lightblack: rgba(32, 33, 36, .2)
   --darkergrey: hsl(0, 0%, 45%)
 
+.theme--light.v-application
+  background: none !important
+
 #inspire
   background: none
   margin-top: 20px
   width: 100%
-
-  .v-application--wrap
-    min-height: 80px
 
   .container 
     padding: 0

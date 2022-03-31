@@ -14,7 +14,7 @@ const {
 } = require('./middleware/auth')
 
 app.use((req, res, next) => {
-  const allowedOrigins = ['http://192.168.1.3:8080', 'http://localhost:8080', 'http://192.168.1.3:8081'];
+  const allowedOrigins = ['http://192.168.1.3:8080', 'http://localhost:8080', 'http://192.168.1.3:8081', 'http://10.93.169.224:8080/'];
   const origin = req.headers.origin;
   if (allowedOrigins.includes(origin))
     res.setHeader('Access-Control-Allow-Origin', origin)

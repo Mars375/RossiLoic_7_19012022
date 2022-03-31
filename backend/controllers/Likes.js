@@ -149,7 +149,7 @@ module.exports.dislikePost = async (req, res) => {
       }
     })
     if (!userAlreadyLikeFound)
-      return res.status(404).json({
+      return res.status(401).json({
         'error': 'Post can\'t be dislike without being liked'
       })
     else {

@@ -188,9 +188,6 @@ export default {
   width: 100%
   height: 100%
 
-.container
-  height: 100%
-
 .v-input
   width: 90%
 

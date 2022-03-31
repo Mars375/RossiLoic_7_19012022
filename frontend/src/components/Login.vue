@@ -49,6 +49,7 @@
           name="password"
           placeholder=" "
           required
+          @keydown.enter="submit()"
         />
         <div class="show" @click="showPassword('show')">
           <font-awesome-icon
@@ -59,9 +60,9 @@
         </div>
         <label for="password" class="label">Mot de passe</label>
       </div>
-      <button @click="submit()" class="submit" v-if="!isLoggingIn">
-        Se connecter
-      </button>
+      <v-col class="mx-auto my-10 pa-0">
+        <v-btn color="button" @click="submit()" class="submit" v-if="!isLoggingIn">Se connecter</v-btn>
+      </v-col>
       <button disabled class="submit" v-if="isLoggingIn">
         <loading-component width="25"></loading-component>
       </button>
@@ -69,7 +70,7 @@
         Besoin d'un compte ?<font-awesome-icon
           class="icon"
           icon="arrow-right"
-        /><a class="button" @click="$emit('change', false)"
+        /><a id="button" @click="$emit('change', false)"
           ><span>S'inscrire</span></a
         >
       </p>
@@ -261,20 +262,10 @@ input[type="text"], input[type="password"], input[type="email"]
   height: 40px
 
 .submit
-  background-color: red
-  border-radius: 12px
-  border: 0
-  box-sizing: border-box
-  color: #eee
+  color: white !important
   cursor: pointer
-  font-size: 18px
-  min-height: 60px
   width: 80%
-  margin: 40px 0
-  align-self: center
 
-  &:active, &:hover
-    filter: brightness(120%)
 
 .label
   color: #65657b
@@ -286,7 +277,7 @@ input[type="text"], input[type="password"], input[type="email"]
   top: 7px
   transform-origin: 0 50%
   transition: transform 200ms, color 200ms
-  top: 13px
+  top: 8px
 
 .input-container
   display: flex
@@ -303,8 +294,11 @@ input[type="text"], input[type="password"], input[type="email"]
   p
     color: red
 
-.button
+#button
+  text-decoration: none
+  user-select: none
   cursor: pointer
+  background-color: transparent
 
 .icon
   padding: 0 5px
@@ -312,7 +306,7 @@ input[type="text"], input[type="password"], input[type="email"]
 
 .show
   position: absolute
-  top: 5px
+  top: 8px
   right: 60px
   cursor: pointer
 
@@ -354,7 +348,7 @@ input[type="text"], input[type="password"], input[type="email"]
     max-width: 400px
 
   form
-    height: 50%
+    height: 60%
     border-radius: 20px
 
   .submit

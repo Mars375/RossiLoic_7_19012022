@@ -1,14 +1,19 @@
 <template>
   <v-card max-width="602" class="mb-8 mx-auto">
-    <v-col class="pa-0">
+    <v-col class="pa-0" @click="$router.push(`/post/${post.id}`)">
       <v-card-actions>
-        <v-list-item-avatar>
+        <v-list-item-avatar
+          @click.stop="$router.push(`/profil/${post.UserId}`)"
+        >
           <v-img
             :src="users.find((user) => user.id === post.UserId).picture"
           ></v-img>
         </v-list-item-avatar>
         <v-list-item two-line class="pa-0">
-          <v-list-item-content class="text-justify">
+          <v-list-item-content
+            class="text-justify"
+            @click.stop="$router.push(`/profil/${post.UserId}`)"
+          >
             <v-list-item-title
               >{{ users.find((user) => user.id === post.UserId).firstname }}
               {{
@@ -22,7 +27,7 @@
             >
           </v-list-item-content>
         </v-list-item>
-        <v-menu offset-y v-if="isLoggedIn">
+        <v-menu offset-y v-if="(isLoggedIn) && ((user.id == post.UserId) || (user.admin == true))">
           <template v-slot:activator="{ on, attrs }">
             <v-btn dark icon v-bind="attrs" v-on="on">
               <v-icon color="button">mdi-dots-horizontal</v-icon>
@@ -60,9 +65,62 @@
     </v-col>
     <v-divider></v-divider>
     <v-bottom-navigation class="elevation-0" horizontal color="button"
-      ><v-btn><span>J'aime</span><v-icon>mdi-heart</v-icon></v-btn
-      ><v-btn @click="(comment = !comment) && isLoggedIn"
-        ><span>Commenter</span><v-icon>mdi-comment</v-icon></v-btn
+      ><v-btn
+        @click="likeComment() && (loader = 'loading1')"
+        :id="'likeBtn' + post.id"
+        :loading="loading1"
+        :disabled="loading1"
+        v-if="isLoggedIn"
+        ><span>J'aime</span
+        ><v-badge
+          bordered
+          bottom
+          overlap
+          left
+          color="button"
+          :content="post.likes"
+          :value="post.likes"
+          ><v-icon>mdi-heart</v-icon></v-badge
+        ></v-btn
+      >
+      <v-btn v-else disabled
+        ><span>J'aime</span
+        ><v-badge
+          bordered
+          bottom
+          overlap
+          left
+          color="button"
+          :content="post.likes"
+          :value="post.likes"
+          ><v-icon>mdi-heart</v-icon></v-badge
+        ></v-btn
+      >
+      <v-btn @click="comment = !comment" v-if="isLoggedIn"
+        ><span>Commenter</span
+        ><v-badge
+          bordered
+          bottom
+          overlap
+          left
+          color="button"
+          :content="post.Comments.length"
+          :value="post.Comments.length"
+          ><v-icon>mdi-comment</v-icon></v-badge
+        ></v-btn
+      >
+      <v-btn v-else disabled
+        ><span>Commenter</span
+        ><v-badge
+          bordered
+          bottom
+          overlap
+          left
+          color="button"
+          :content="post.Comments.length"
+          :value="post.Comments.length"
+          ><v-icon>mdi-comment</v-icon></v-badge
+        ></v-btn
       ></v-bottom-navigation
     >
     <v-divider></v-divider>
@@ -82,17 +140,6 @@
         @click:append-outer="sendMessage"
         @keydown.enter="sendMessage"
         hide-details="auto"
-      ></v-text-field>
-      <v-text-field
-        color="input"
-        :id="post.id.toString()"
-        label="Veuillez vous connecter pour commenter"
-        single-line
-        filled
-        v-else-if="comment && !isLoggedIn"
-        class="mx-auto my-2"
-        hide-details="auto"
-        disabled
       ></v-text-field>
     </v-expand-transition>
     <v-list-item three-line dense class="d-block" v-if="post.Comments.length">
@@ -114,7 +161,7 @@
                 users.find((user) => user.id === comment.userId).username
               }}</v-list-item-title
             >
-            <v-list-item-subtitle v-if="!updateComment">{{
+            <v-list-item-subtitle v-if="state != comment.id">{{
               comment.content
             }}</v-list-item-subtitle>
             <v-text-field
@@ -127,28 +174,29 @@
               hide-details
               autofocus
               flat
-              height="16px"
               class="pa-0"
               dense
-              v-else
-              @click:append-outer="sendMessage"
+              v-if="state == comment.id"
+              @click:append-outer="updateComment()"
+              @keydown.enter="updateComment()"
               :append-outer-icon="comment.content ? 'mdi-send' : null"
             ></v-text-field>
           </v-list-item-content>
-          <v-list-item-content class="pa-0 ml-auto d-block my-auto">
+          <v-list-item-content
+            class="pa-0 ml-auto d-block my-auto"
+            v-if="(isLoggedIn) && ((user.id == comment.userId) || (user.admin == true))"
+          >
             <v-icon
               class="mr-1"
               dense
-              v-if="isLoggedIn && isCreator(comment)"
-              @click="updateComment = !updateComment"
+              @click="state == null ? (state = comment.id) : (state = null)"
               >mdi-pencil</v-icon
             >
             <v-icon
               dense
               @click.stop="
-                (alert = true) && (id = comment.id) && (isComment = true)
+                (alert = true) && (commentId = comment.id) && (isComment = true)
               "
-              v-if="isLoggedIn && isCreator(comment)"
               >mdi-trash-can-outline</v-icon
             >
           </v-list-item-content>
@@ -198,9 +246,25 @@
           <v-btn
             color="button"
             text
-            @click="isComment ? removeComment : removePost"
+            @click="isComment ? removeComment() : removePost()"
           >
             Oui
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="listOfUser" scrollable max-width="300px">
+      <v-card>
+        <v-card-title>Select Country</v-card-title>
+        <v-divider></v-divider>
+        <v-card-text style="height: 300px"> </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-btn color="blue darken-1" text @click="listOfUser = false">
+            Close
+          </v-btn>
+          <v-btn color="blue darken-1" text @click="listOfUser = false">
+            Save
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -223,12 +287,15 @@ export default {
       showMore: false,
       limit: 2,
       alert: false,
-      id: "",
+      commentId: "",
       isComment: false,
-      updateComment: false,
+      state: null,
+      listOfUser: false,
+
+      loader: null,
+      loading1: false,
     };
   },
-
   components: {
     EditPost,
   },
@@ -248,23 +315,108 @@ export default {
     },
   },
   methods: {
-    isCreator(comment) {
-      return this.user.id == comment.userId;
+    async likeComment() {
+      const user = this.post.Users.find(
+        (user) => this.user.id == user.Like.userId
+      );
+      if (user) {
+        const settings = {
+          method: "POST",
+          credentials: "include",
+        };
+        try {
+          await fetch(
+            `${location.protocol}//${location.hostname}:3000/post/${this.post.id}/dislike`,
+            settings
+          );
+          this.post.likes--;
+          this.post.Users.splice(this.post.Users.indexOf(user), 1);
+          const likes = document.querySelector(`#likeBtn${this.post.id}`);
+          likes.setAttribute("style", "color: rgba(0, 0, 0, 0.6) !important");
+          return;
+        } catch (error) {
+          console.error(error);
+        }
+      } else {
+        const settings = {
+          method: "POST",
+          credentials: "include",
+        };
+        try {
+          await fetch(
+            `${location.protocol}//${location.hostname}:3000/post/${this.post.id}/like`,
+            settings
+          );
+          this.post.likes++;
+          this.post.Users.push({ Like: { userId: this.user.id } });
+          const likes = document.querySelector(`#likeBtn${this.post.id}`);
+          likes.setAttribute("style", "color: var(--orange) !important");
+        } catch (error) {
+          console.error(error);
+        }
+      }
+      if (!this.post.Users.length) {
+        const settings = {
+          method: "POST",
+          credentials: "include",
+        };
+
+        try {
+          await fetch(
+            `${location.protocol}//${location.hostname}:3000/post/${this.post.id}/like`,
+            settings
+          );
+          this.post.likes++;
+          this.post.Users.push({ Like: { userId: this.user.id } });
+          const likes = document.querySelector(`#likeBtn${this.post.id}`);
+          likes.setAttribute("style", "color: var(--orange) !important");
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    },
+    async updateComment() {
+      const comment = this.post.Comments.find(
+        (comment) => this.state == comment.id
+      );
+      const content = {
+        content: comment.content,
+      };
+      const settings = {
+        method: "PUT",
+        credentials: "include",
+        body: JSON.stringify(content),
+        headers: { "Content-Type": "application/json" },
+      };
+      try {
+        await fetch(
+          `${location.protocol}//${location.hostname}:3000/post/${this.post.id}/comment/${this.state}`,
+          settings
+        );
+      } catch (error) {
+        console.error(error);
+      }
+      this.state = null;
     },
     async removeComment() {
       this.alert = false;
-      for (let comment of this.post.Comments) {
-        if (this.id == comment.id) {
-          this.post.Comments.splice(comment, 1);
-          const settings = {
-            method: "DELETE",
-            credentials: "include",
-          };
-          await fetch(
-            `${location.protocol}//${location.hostname}:3000/post/${this.post.id}/comment/${this.id}`,
-            settings
-          );
-        }
+      this.post.Comments.splice(
+        this.post.Comments.indexOf(
+          this.post.Comments.find((comment) => this.commentId == comment.id)
+        ),
+        1
+      );
+      const settings = {
+        method: "DELETE",
+        credentials: "include",
+      };
+      try {
+        await fetch(
+          `${location.protocol}//${location.hostname}:3000/post/${this.post.id}/comment/${this.commentId}`,
+          settings
+        );
+      } catch (error) {
+        console.error(error);
       }
     },
     sortComments() {
@@ -313,30 +465,42 @@ export default {
           params
         );
         await response.json();
-        await this.$router.go();
       } catch (error) {
         error;
       }
     },
   },
-  async mounted() {},
+  mounted() {},
+  watch: {
+    loader() {
+      const l = this.loader;
+      this[l] = !this[l];
+
+      setTimeout(() => (this[l] = false), 500);
+
+      this.loader = null;
+    },
+  },
 };
 </script>
 
-<style lang="sass">
+<style lang="sass" scoped>
 .dropdown:hover
   background-color: var(--salmon)
   cursor: pointer
-
-.container
-  height: fit-content
-
+  
 .v-list-item__content
   flex: none !important
   overflow: visible !important
+  display: block !important
   &:active
     color: var(--orange)
 
 .v-icon:focus
   color: var(--orange) !important
+
+.v-badge__badge
+  min-width: 15px !important
+  height: 15px !important
+  padding: 2px 4px !important
 </style>

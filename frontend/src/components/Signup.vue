@@ -111,15 +111,15 @@
         >
         <p class="alerte" v-if="regexppassword">{{ regexppassword }}</p>
       </div>
-      <button @click="submit()" class="submit" v-if="!isLoggingIn">
-        S'inscrire
-      </button>
+      <v-col class="mx-auto my-10 pa-0 ">
+        <v-btn color="button" @click="submit()" class="submit" v-if="!isLoggingIn">S'inscrire</v-btn>
+      </v-col>
       <button disabled class="submit" v-if="isLoggingIn">
         <loading-component width="25"></loading-component>
       </button>
       <p>
         Déjà inscrit ?<font-awesome-icon class="icon" icon="arrow-right" /><a
-          class="button"
+          id="button"
           @click="$emit('change', true)"
           ><span>Se connecter</span></a
         >
@@ -185,12 +185,17 @@ export default {
       return "";
     },
     regexppassword() {
-      const passwordSecure = zxcvbn(this.password, [this.firstname, this.lastname, this.mail]);
-      if (!this.password)
-        return ""
-      if (passwordSecure.score < 2 || this.password.toLowerCase().includes('groupomania'))
-      {
-        return "Mot de passe trop faible"
+      const passwordSecure = zxcvbn(this.password, [
+        this.firstname,
+        this.lastname,
+        this.mail,
+      ]);
+      if (!this.password) return "";
+      if (
+        passwordSecure.score < 2 ||
+        this.password.toLowerCase().includes("groupomania")
+      ) {
+        return "Mot de passe trop faible";
       }
       if (this.password !== this.checkpassword) {
         this.isvalid(true);
@@ -247,7 +252,7 @@ export default {
         );
         setTimeout(async () => {
           const data = await fetchResponse.json();
-          alert(data.message)
+          alert(data.message);
           this.isLoggingIn = false;
           setTimeout(() => this.redirect(), 500);
         }, 500);
@@ -331,20 +336,8 @@ input[type="text"], input[type="password"], input[type="email"]
   height: 40px
 
 .submit
-  background-color: red
-  border-radius: 12px
-  border: 0
-  box-sizing: border-box
-  color: #eee
-  cursor: pointer
-  font-size: 18px
-  height: 50px
+  color: white !important
   width: 80%
-  margin: 40px 0
-  align-self: center
-
-  &:active, &:hover
-    filter: brightness(120%)
 
 .label
   color: #65657b
@@ -355,7 +348,7 @@ input[type="text"], input[type="password"], input[type="email"]
   left: 12%
   transform-origin: 0 50%
   transition: transform 200ms, color 200ms
-  top: 13px
+  top: 8px
 
 .input-container
   display: flex
@@ -375,10 +368,11 @@ input:not(:placeholder-shown) ~ .label.warning
   color: red
   font-size: 14px
 
-.button
+#button
   text-decoration: none
   user-select: none
   cursor: pointer
+  background-color: transparent
 
 .icon
   padding: 0 5px
@@ -386,8 +380,8 @@ input:not(:placeholder-shown) ~ .label.warning
 
 .show
   position: absolute
-  top: 5px
-  right: 50px
+  top: 8px
+  right: 60px
   cursor: pointer
 
 @media screen and (min-width: 615px)
@@ -400,7 +394,7 @@ input:not(:placeholder-shown) ~ .label.warning
     max-width: 400px
 
   form
-    height: 80%
+    height: 90%
     border-radius: 20px
 
   .submit

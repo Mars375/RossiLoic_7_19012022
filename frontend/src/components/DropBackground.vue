@@ -1,13 +1,11 @@
 <template>
   <div>
-    <v-btn icon @click="uploadBg = !uploadBg"><v-icon color="var(--orange)">mdi-camera-plus</v-icon></v-btn>
+    <v-btn icon @click="uploadBg = !uploadBg"><v-icon color="button">mdi-camera-plus</v-icon></v-btn>
     <div class="fondBackground" @click="uploadBg = false" v-if="uploadBg"></div>
     <div class="layer" v-if="uploadBg">
-      <div class="flex header">
-        <h2>Sélectionner une image</h2>
-        <button class="close flex">
-          <font-awesome-icon icon="times" @click="uploadBg = false" />
-        </button>
+      <div class="d-flex justify-space-between align-center pa-2">
+        <h2 class="font-weight-bold">Sélectionner une image</h2>
+        <v-btn icon @click="uploadBg = false"><v-icon small>mdi-window-close</v-icon></v-btn>
       </div>
       <div class="cardAddImg flex" v-if="!selectedFile">
         <div class="contentCircle flex">
@@ -39,7 +37,7 @@
         accept=".jpg, .jpeg, .png, .gif, .webp"
         @change="onFileSelected"
       />
-      <button @click="upload()" class="upload">Appliquer</button>
+      <v-btn @click="upload()" color="button" class="upload">Appliquer</v-btn>
     </div>
   </div>
 </template>
@@ -92,7 +90,7 @@ export default {
 
 .v-btn
   background-color: white
-  border: 1px solid var(--lightblack)
+
 div
   user-select: none
 
@@ -155,9 +153,9 @@ div
   align-content: center
   justify-content: center
   margin: auto
-  width: 100px
-  height: 100px
-  border-radius: 100px
+  width: 135px
+  height: 135px
+  border-radius: 130px
   background-color: white
 
   > svg
@@ -174,11 +172,6 @@ div
   opacity: 0
 
 .upload
-  border: 1px solid var(--orange)
-  background-color: var(--orange)
   color: white
-  padding: 8px
-  border-radius: 15px
-  margin-top: 5px
-  cursor: pointer
+  margin: 7px
 </style>

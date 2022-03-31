@@ -8,11 +8,11 @@ module.exports.getOnePost = async (req, res) => {
       },
       include: [{
         model: models.User,
-        attributes: ['username']
+        attributes: ['username', 'picture'],
       },
       {
         model: models.Comment,
-        attributes: ['content']
+        attributes: ['content', 'userId', 'createdAt', 'id']
       }]
     })
     if (!post)
@@ -71,7 +71,7 @@ module.exports.getPostOfUser = async (req, res) => {
       },
       {
         model: models.Comment,
-        attributes: ['content', 'userId']
+        attributes: ['content', 'userId', 'createdAt', 'id']
       }],
       order: [
         ['createdAt', 'DESC']
@@ -100,11 +100,11 @@ module.exports.getAllPostByCategory = async (req, res) => {
       },
       include: [{
         model: models.User,
-        attributes: ['username']
+        attributes: ['username', 'picture']
       },
       {
         model: models.Comment,
-        attributes: ['content']
+        attributes: ['content', 'userId', 'createdAt', 'id']
       }],
       order: [
         ['createdAt', 'DESC']

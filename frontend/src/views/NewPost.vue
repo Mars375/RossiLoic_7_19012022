@@ -17,6 +17,7 @@
           small-chips
           solo
           height="60px"
+          class="ma-auto"
         >
           <template v-slot:no-data>
             <v-list-item active-class="listpouet">
@@ -264,9 +265,6 @@ export default {
 
 #tag
   height: 120px
-
-#inspire
-  height: 80px
 
 textarea
   outline: none
