@@ -6,7 +6,10 @@
         class="backgroundImg"
         alt="image d'arrière plan de l'utilisateur"
       />
-      <DropBackground v-if="(isLoggedIn) && ((user.id == $route.params.id) || (user.admin == true))" class="dropBackground" />
+      <DropBackground
+        v-if="isLoggedIn && (user.id == $route.params.id || user.admin == true)"
+        class="dropBackground"
+      />
       <div class="pfpContent">
         <img
           :src="profil.picture"
@@ -14,20 +17,23 @@
           alt="image de profil de l'utilisateur"
         />
       </div>
-      <button
+      <v-btn
+        small
+        outlined
+        color="button"
+        class="profilButton background"
         v-if="isFollow($route.params.id) && isNotHimself($route.params.id)"
         @click="unfollow($route.params.id, $event)"
-        class="unfollowButton profilButton"
+        >Unfollow</v-btn
       >
-        Unfollow
-      </button>
-      <button
+      <v-btn
+        small
+        color="button"
         v-else-if="isNotHimself($route.params.id)"
         @click="follow($route.params.id)"
-        class="profilButton followButton"
+        class="profilButton color"
+        >Follow</v-btn
       >
-        Follow
-      </button>
       <article id="idCard">
         <div class="cardHeader flex">
           <h2 class="name">{{ profil.firstname }} {{ profil.lastname }}</h2>
@@ -49,7 +55,11 @@
           >
         </div>
         <p class="bioUser">{{ profil.bio }} 🥜</p>
-        <EditUser v-if="(isLoggedIn) && ((user.id == $route.params.id) || (user.admin == true))" />
+        <EditUser
+          v-if="
+            isLoggedIn && (user.id == $route.params.id || user.admin == true)
+          "
+        />
       </article>
     </section>
     <v-container class="pa-0 mt-4">
@@ -82,7 +92,7 @@ import { mapState, mapGetters } from "vuex";
 import DropBackground from "../components/DropBackground.vue";
 import EditUser from "../components/EditUser.vue";
 import Post from "../components/Post.vue";
-import CreatePost from "../components/CreatePost.vue"
+import CreatePost from "../components/CreatePost.vue";
 import { mixin as clickaway } from "vue-clickaway";
 
 export default {
@@ -130,9 +140,16 @@ export default {
     },
     isFollow(id) {
       if (this.isLoggedIn)
-        return this.follows.userFollowing.some((f) => {
-          return id == f.personBeingFollowed;
-        });
+        if (
+          setTimeout(
+            () =>
+              this.follows.userFollowing.some((f) => {
+                id == f.personBeingFollowed;
+              }),
+            600
+          )
+        )
+          return true;
     },
     async follow(id) {
       try {
@@ -195,7 +212,7 @@ export default {
         );
         this.followProfil = await response.json();
         this.loaded = true;
-        this.loading = false
+        this.loading = false;
       } catch (error) {
         console.log(error);
       }
@@ -327,27 +344,10 @@ p
   position: absolute
   top: 280px
   right: 20px
-  width: 70px
 
-.unfollowButton
-  border: 1px solid var(--orange)
-  background-color: white
-  color: var(--orange)
-  padding: 8px
-  border-radius: 15px
-  cursor: pointer
-  height: 30px
-  width: 80px
-  font-weight: bold
+.color
+  color: white !important
 
-.followButton
-  border: 1px solid var(--orange)
-  background-color: var(--orange)
-  color: white
-  padding: 8px
-  border-radius: 15px
-  cursor: pointer
-  height: 30px
-  width: 80px
-  font-weight: bold
+.background
+  background-color: white !important
 </style>

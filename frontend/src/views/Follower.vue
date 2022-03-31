@@ -25,7 +25,11 @@
           :to="{ name: 'Profil', params: { id: follower.id } }"
           class="flex"
         >
-          <img :src="follower.picture" class="pp" alt="image de profil de la personne qui vous suit"/>
+          <img
+            :src="follower.picture"
+            class="pp"
+            alt="image de profil de la personne qui vous suit"
+          />
           <div>
             <h2 class="name">
               {{ follower.firstname }} {{ follower.lastname }}
@@ -33,20 +37,21 @@
             <p>@{{ follower.username }}</p>
           </div>
         </router-link>
-        <button
+        <v-btn
+          small
+          outlined
+          color="button"
           v-if="isFollow(follower.id) && isNotHimself(follower.id)"
           @click="unfollow(follower.id, $event)"
-          class="unfollowButton"
+          >Unfollow</v-btn
         >
-          Unfollow
-        </button>
-        <button
+        <v-btn
+          small
+          color="button"
           v-else-if="isNotHimself(follower.id)"
           @click="follow(follower.id)"
-          class="followButton"
+          >Follow</v-btn
         >
-          Follow
-        </button>
       </article>
     </section>
   </main>
@@ -89,7 +94,10 @@ export default {
         credentials: "include",
       };
       try {
-        await fetch(`${location.protocol}//${location.hostname}:3000/user/follow/${id}`, settings);
+        await fetch(
+          `${location.protocol}//${location.hostname}:3000/user/follow/${id}`,
+          settings
+        );
         this.follows.userFollowing.push({
           personBeingFollowed: id,
           personFollowing: this.user.id,
@@ -104,7 +112,10 @@ export default {
         credentials: "include",
       };
       try {
-        await fetch(`${location.protocol}//${location.hostname}:3000/user/unfollow/${id}`, settings);
+        await fetch(
+          `${location.protocol}//${location.hostname}:3000/user/unfollow/${id}`,
+          settings
+        );
         this.follows.userFollowing.splice(
           this.follows.userFollowing.indexOf(event),
           1
@@ -136,7 +147,9 @@ export default {
       console.log(error);
     }
     try {
-      const response = await fetch(`${location.protocol}//${location.hostname}:3000/user`);
+      const response = await fetch(
+        `${location.protocol}//${location.hostname}:3000/user`
+      );
       this.users = await response.json();
       this.filterUser = this.users.filter((el) => {
         return this.follows.userFollower.some((f) => {
@@ -217,27 +230,8 @@ nav
           text-align: start
           color: grey
 
-.unfollowButton
-  border: 1px solid var(--orange)
-  background-color: white
-  color: var(--orange)
-  padding: 8px
-  border-radius: 15px
-  cursor: pointer
-  height: 30px
-  width: 80px
-  font-weight: bold
-
-.followButton
-  border: 1px solid var(--orange)
-  background-color: var(--orange)
-  color: white
-  padding: 8px
-  border-radius: 15px
-  cursor: pointer
-  height: 30px
-  width: 80px
-  font-weight: bold
+.color 
+  color: white !important
 
 .unfollowing
   transition-duration : 500ms
