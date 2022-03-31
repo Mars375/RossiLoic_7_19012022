@@ -63,7 +63,7 @@
       </article>
     </section>
     <v-container class="pa-0 mt-4">
-      <CreatePost v-if="isLoggedIn" />
+      <CreatePost v-if="isLoggedIn && $route.params.id == this.user.id" />
       <v-container v-if="loading">
         <v-skeleton-loader
           :loading="loading"
@@ -201,7 +201,8 @@ export default {
         const response = await fetch(
           `${location.protocol}//${location.hostname}:3000/post/user/${this.$route.params.id}`
         );
-        this.posts = await response.json();
+        if (response.ok)
+          this.posts = await response.json();
         this.posts = this.posts.posts;
       } catch (error) {
         console.log(error);
@@ -244,6 +245,7 @@ main
   width: 100%
   background-color: var(--salmon)
   z-index: 1
+  flex: none
 
   > .dropBackground
     width: 30px

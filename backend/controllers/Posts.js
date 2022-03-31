@@ -78,10 +78,9 @@ module.exports.getPostOfUser = async (req, res) => {
       ]
     })
     if (!posts.length)
-      return res.status(404).json({
+      return res.status(200).json({
         'error': 'Post not found'
       })
-      console.log(posts);
     res.status(200).json({
       posts
     })

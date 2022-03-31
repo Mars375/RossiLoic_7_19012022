@@ -179,7 +179,7 @@ export default {
 };
 </script>
 
-<style lang="sass">
+<style lang="sass" scoped>
 
 .app-text-field
   width: 90%

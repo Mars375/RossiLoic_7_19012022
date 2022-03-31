@@ -3,7 +3,7 @@
     <v-col class="pa-0" @click="$router.push(`/post/${post.id}`)">
       <v-card-actions>
         <v-list-item-avatar
-          @click.stop="$router.push(`/profil/${post.UserId}`)"
+          @click.stop="redirectFromPost"
         >
           <v-img
             :src="users.find((user) => user.id === post.UserId).picture"
@@ -12,7 +12,7 @@
         <v-list-item two-line class="pa-0">
           <v-list-item-content
             class="text-justify"
-            @click.stop="$router.push(`/profil/${post.UserId}`)"
+            @click.stop="redirectFromPost"
           >
             <v-list-item-title
               >{{ users.find((user) => user.id === post.UserId).firstname }}
@@ -146,7 +146,7 @@
       <template v-for="comment in computedComments">
         <v-list-item :key="comment.id">
           <v-list-item-avatar
-            @click="$router.push(`/profil/${comment.userId}`)"
+            @click="redirectFromComment"
           >
             <v-img
               :src="users.find((user) => user.id === comment.userId).picture"
@@ -156,7 +156,7 @@
             class="text-justify pa-0 align-content-center mr-auto d-block my-auto"
           >
             <v-list-item-title
-              @click="$router.push(`/profil/${comment.userId}`)"
+              @click="redirectFromComment"
               >@{{
                 users.find((user) => user.id === comment.userId).username
               }}</v-list-item-title
@@ -315,6 +315,12 @@ export default {
     },
   },
   methods: {
+    redirectFromComment(comment){
+      location.pathname == `/profil/${comment.Userid}` ? this.$router.push(`/profil/${comment.UserId}`) : this.$router.go()
+    },
+    redirectFromPost(post){
+      location.pathname == `/profil/${post.Userid}` ? this.$router.push(`/profil/${post.UserId}`) : this.$router.go()
+    },
     async likeComment() {
       const user = this.post.Users.find(
         (user) => this.user.id == user.Like.userId

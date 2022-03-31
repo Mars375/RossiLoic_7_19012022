@@ -14,18 +14,28 @@
         />
       </h1>
     </a>
-    <form
-      action="javascript:void(0)"
-      autocomplete="off"
-      method="get"
-      role="search"
-      class="searchbar"
+    <v-autocomplete
+      v-model="model"
+      :items="users"
+      :search-input.sync="search"
+      :filter="customFilter"
+      clearable
+      hide-details
+      item-value="lastname"
+      label="Qui recherchez-vous ?"
+      prepend-inner-icon="mdi-magnify"
+      dense
+      solo
+      flat
+      outlined
+      color="button"
     >
-      <label class="headerSearchbar" for="header-searchbar">
-        <font-awesome-icon class="search" icon="search" />
-      </label>
-      <input type="search" placeholder="Rechercher" />
-    </form>
+      <template v-slot:item="{ item }">
+        <v-list-item @click="redirect(item)"
+          >{{ item.firstname }} {{ item.lastname }}</v-list-item
+        >
+      </template></v-autocomplete
+    >
     <div id="nav">
       <v-btn
         small
@@ -121,10 +131,32 @@ export default {
       dropdown: false,
       signup: false,
       login: false,
+
+      users: [],
+      model: null,
+      search: null,
+      tab: null,
     };
   },
   methods: {
     ...mapMutations(["setUser", "setToken"]),
+
+    redirect(user) {
+      if (location.pathname == "/profil/" + user.id) return this.$router.go();
+      this.$router.push("/profil/" + user.id);
+    },
+    customFilter(user, queryText) {
+      const textOne = user.username.toLowerCase();
+      const textTwo = user.lastname.toLowerCase();
+      const textThree = user.firstname.toLowerCase();
+      const searchText = queryText.toLowerCase();
+
+      return (
+        textOne.indexOf(searchText) > -1 ||
+        textTwo.indexOf(searchText) > -1 ||
+        textThree.indexOf(searchText) > -1
+      );
+    },
     awayDropdown() {
       this.dropdown = false;
     },
@@ -159,6 +191,26 @@ export default {
     ...mapGetters(["isLoggedIn"]),
   },
   mounted() {},
+  watch: {
+    model(val) {
+      if (val != null) this.tab = 0;
+      else this.tab = null;
+    },
+    async search() {
+      // Items have already been loaded
+      if (this.users.length > 0) return;
+
+      // Lazily load input items
+      try {
+        const fetchResponse = await fetch(
+          `${location.protocol}//${location.hostname}:3000/user/`
+        );
+        if (fetchResponse.ok) this.users = await fetchResponse.json();
+      } catch (error) {
+        console.error(error);
+      }
+    },
+  },
 };
 </script>
 
@@ -193,14 +245,7 @@ header
 
 #logo
   height: 52px
-
-.searchbar
-  display: flex
-  border-radius: 5px
-  border: 1px solid
-  height: 40px
-  flex-grow: .6
-  max-width: 700px
+  margin-right: 15px
 
 input
   outline: red
@@ -212,10 +257,6 @@ input
   padding: 0 10px
   display: flex
   align-items: center
-
-.search
-  font-size: 20px
-  font-weight: 200
 
 .logoDekstop
   display: none
