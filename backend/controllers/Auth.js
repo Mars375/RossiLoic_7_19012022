@@ -1,7 +1,6 @@
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const zxcvbn = require('zxcvbn')
-const CryptoJS = require('crypto-js')
 require('dotenv').config()
 
 const models = require('../models')
@@ -10,7 +9,6 @@ const createToken = (id) => {
   return jwt.sign({
     id
   }, process.env.SECRET_TOKEN, {
-    expiresIn: '24h'
   })
 }
 
@@ -22,6 +20,7 @@ module.exports.signup = async (req, res, next) => {
     firstname,
     password,
     bio,
+    staySign
   } = req.body
   if (email == null || username == null || password == null) {
     return res.status(400).json({
@@ -29,7 +28,11 @@ module.exports.signup = async (req, res, next) => {
     });
   }
   const passwordSecure = zxcvbn(password, [firstname, lastname, email, username])
-  if (passwordSecure.score >= 2 || password.toLowerCase().includes('groupomania')) {
+  if (password.toLowerCase().includes('groupomania'))
+    return res.status(401).json({
+      message: 'Password must not includes groupomania'
+    })
+  if (passwordSecure.score >= 2) {
     try {
       const hash = await bcrypt.hash(password, 10)
       var newUser = await models.User.create({
@@ -40,6 +43,17 @@ module.exports.signup = async (req, res, next) => {
         firstname,
         bio,
       })
+      const token = createToken(newUser.id)
+      if (staySign) {
+        res.cookie('jwt', token, {
+          maxAge: 7 * 24 * 3600000
+        })
+      } // 7 days
+      else if (!staySign) {
+        res.cookie('jwt', token, {
+          maxAge: 1 * 24 * 3600000
+        })
+      } // 1 day
       res.status(201).json({
         'userId': newUser.id,
         message: 'User created !'
@@ -60,7 +74,8 @@ module.exports.signup = async (req, res, next) => {
 module.exports.login = async (req, res, next) => {
   const {
     email,
-    password
+    password,
+    staySign,
   } = req.body
   try {
     const user = await models.User.findOne({
@@ -69,7 +84,7 @@ module.exports.login = async (req, res, next) => {
       }
     })
     if (!user)
-      return res.status(404).json({
+      return res.status(401).json({
         message: 'Wrong Mail or Password !'
       })
     const userPassword = await bcrypt.compare(password, user.password)
@@ -78,9 +93,16 @@ module.exports.login = async (req, res, next) => {
         message: 'Wrong Mail or Password !'
       })
     const token = createToken(user.id)
-    res.cookie('jwt', token, {
-      maxAge: 24 * 60 * 60 * 1000 * 2
-    })
+    if (staySign) {
+      res.cookie('jwt', token, {
+        maxAge: 7 * 24 * 3600000
+      })
+    } // 7 days
+    else if (!staySign) {
+      res.cookie('jwt', token, {
+        maxAge: 1 * 24 * 3600000
+      })
+    } // 1 day
     res.status(200).json({
       user: {
         id: user.id,

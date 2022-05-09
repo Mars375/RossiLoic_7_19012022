@@ -6,6 +6,7 @@ const userRoutes = require('./routes/User')
 const authRoutes = require('./routes/Auth')
 const postRoutes = require('./routes/Posts')
 const commentRoutes = require('./routes/Comments')
+const pwdresetRoutes = require('./routes/Pwd-reset')
 const cookieParser = require('cookie-parser')
 
 const {
@@ -32,11 +33,13 @@ app.use('/pictures', express.static(path.join(__dirname, 'pictures')))
 app.get('/jwtid', checkUser, requireAuth, (req, res) => {
   res.status(200).send(res.locals.user.id.toString())
 })
+
 // routes
 app.use('/auth', authRoutes)
 app.use('/user', userRoutes)
 app.use('/post', postRoutes)
 app.use('/post', commentRoutes)
+app.use('/password-reset', pwdresetRoutes)
 
 
 module.exports = app

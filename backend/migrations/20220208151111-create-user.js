@@ -38,11 +38,11 @@ module.exports = {
         defaultValue: 0
       },
       lastname: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.STRING
       },
       firstname: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.STRING
       },
       picture: {
