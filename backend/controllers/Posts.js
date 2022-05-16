@@ -33,13 +33,13 @@ module.exports.getAllPosts = async (req, res) => {
   try {
     const posts = await models.Post.findAll({
       include: [{
-          model: models.User,
-          attributes: ['username', 'picture'],
-        },
-        {
-          model: models.Comment,
-          attributes: ['content', 'userId', 'createdAt', 'id']
-        }
+        model: models.User,
+        attributes: ['username', 'picture'],
+      },
+      {
+        model: models.Comment,
+        attributes: ['content', 'userId', 'createdAt', 'id']
+      }
       ],
       order: [
         ['createdAt', 'DESC']
@@ -53,6 +53,7 @@ module.exports.getAllPosts = async (req, res) => {
       posts
     })
   } catch (error) {
+    console.log(error);
     res.status(500).json({
       error
     })
@@ -124,10 +125,11 @@ module.exports.getAllPostByCategory = async (req, res) => {
 }
 
 module.exports.createPost = async (req, res) => {
+  console.log(req.body);
   const {
     title,
     content,
-  } = JSON.parse(req.body.post)
+  } = req.body
   const { category } = req.body
   let attachmentURL
   if (!title || title.length <= 2 || !category)
@@ -161,6 +163,7 @@ module.exports.createPost = async (req, res) => {
       return res.status(500).json(error)
     }
   } catch (error) {
+    console.log(error);
     return res.status(500).json(error)
   }
 }
@@ -175,7 +178,7 @@ module.exports.updatePost = async (req, res) => {
     return res.status(400).json({
       'error': 'invalid parameters'
     })
-    
+
   }
   try {
     const user = await models.User.findOne({

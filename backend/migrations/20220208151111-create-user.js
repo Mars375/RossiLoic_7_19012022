@@ -24,7 +24,7 @@ module.exports = {
         unique: true,
       },
       password: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.STRING
       },
       bio: {
@@ -48,12 +48,12 @@ module.exports = {
       picture: {
         allowNull: false,
         type: Sequelize.STRING,
-        defaultValue: 'http://192.168.1.3:3000/pictures/defaultpicture.webp'
+        defaultValue: 'http://localhost:3000/pictures/defaultpicture.png'
       },
       background: {
         allowNull: false,
         type: Sequelize.STRING,
-        defaultValue: 'http://192.168.1.3:3000/pictures/defaultbackground.webp'
+        defaultValue: 'http://localhost:3000/pictures/defaultbackground.png'
       },
       createdAt: {
         allowNull: false,

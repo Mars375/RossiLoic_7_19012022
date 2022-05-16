@@ -111,7 +111,7 @@
         >
         <p class="alerte" v-if="regexppassword">{{ regexppassword }}</p>
       </div>
-      <v-col class="mx-auto my-10 pa-0 ">
+      <v-col class="mx-auto mb-10 mt-6 pa-0 ">
         <v-btn color="button" @click="submit()" class="submit" v-if="!isLoggingIn">S'inscrire</v-btn>
       </v-col>
       <button disabled class="submit" v-if="isLoggingIn">
@@ -273,7 +273,7 @@ h2
   font-size: 22px
   font-weight: 500
   justify-content: space-between
-  margin: 10% 43px
+  padding: 10% 43px
 
   > svg
     cursor: pointer
@@ -303,7 +303,6 @@ form
   -moz-backface-visibility: hidden
   -o-backface-visibility: hidden
   backface-visibility: hidden
-  overflow: scroll
   height: 100%
 
   > p
@@ -388,6 +387,7 @@ input:not(:placeholder-shown) ~ .label.warning
 
   h2
     margin: 5%
+    padding: 5%
 
   #signup
     height: 80%

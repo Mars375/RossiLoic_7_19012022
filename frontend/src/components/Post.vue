@@ -57,9 +57,9 @@
         max-height="300px"
         contain
         dark
-        v-if="isImage(post.attachment)"
+        v-if="isImage(post.attachment) && post.attachment"
       />
-      <video width="100%" :src="post.attachment" controls v-else></video>
+      <video width="100%" :src="post.attachment" controls v-else-if="post.attachment"></video>
       <v-card-title> {{ post.title }} </v-card-title>
       <v-card-text> {{ post.content }} </v-card-text>
     </v-col>
@@ -458,6 +458,7 @@ export default {
       this.message = "";
     },
     isImage(postFile) {
+      if(!postFile) return false
       return this.fileextension.includes(postFile.split(".").pop());
     },
     async removePost() {

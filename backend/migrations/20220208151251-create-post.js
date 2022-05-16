@@ -17,7 +17,7 @@ module.exports = {
         }
       },
       title: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.STRING
       },
       content: {
@@ -25,7 +25,7 @@ module.exports = {
         type: Sequelize.TEXT
       },
       category: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.STRING
       },
       attachment: {
