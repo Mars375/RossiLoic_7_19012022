@@ -188,7 +188,11 @@ module.exports.loginGoogle = async (req, res) => {
     else {
       newUser = user
     }
-    res.cookie('jwt', userInfo.config.headers.Authorization.replace('Bearer ', ''))
+    const token = createToken(newUser.id)
+    res.cookie('jwt', token, {
+      maxAge: 7 * 24 * 3600000
+    })
+
     res.status(200).json({
       user: {
         id: newUser.id,

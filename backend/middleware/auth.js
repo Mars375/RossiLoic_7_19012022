@@ -7,9 +7,13 @@ module.exports.checkUser = (req, res, next) => {
   if (token) {
     jwt.verify(token, process.env.SECRET_TOKEN, async (error, decodedToken) => {
       if (error) {
+        console.log('test');
         res.locals.user = null
         res.cookie('jwt', '', {
           maxAge: 0
+        })
+        res.status(401).json({
+          message: 'Unauthorized'
         })
       } else {
         let user = await models.User.findOne({

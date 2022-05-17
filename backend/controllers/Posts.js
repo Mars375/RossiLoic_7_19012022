@@ -132,8 +132,8 @@ module.exports.createPost = async (req, res) => {
   } = req.body
   const { category } = req.body
   let attachmentURL
-  if (!title || title.length <= 2 || !category)
-    return res.status(400).json({
+  if (!content && !req.file)
+    return res.status(401).json({
       'error': 'invalid parameters'
     })
   try {
@@ -144,21 +144,21 @@ module.exports.createPost = async (req, res) => {
       }
     })
     if (!user)
-      return res.status(400).json(error)
+      return res.status(404).json(error)
     //Récupération du corps du post
     if (!req.file)
       attachmentURL == null
     else
       attachmentURL = `${req.protocol}://${req.get('host')}/pictures/${req.file.filename}`
     try {
-      await models.Post.create({
+      const post = await models.Post.create({
         title,
         content,
         category,
         attachment: attachmentURL,
         UserId: user.id
       })
-      res.status(201).json({ 'message': 'Post is created' })
+      res.status(201).json({ 'message': 'Post is created', post })
     } catch (error) {
       return res.status(500).json(error)
     }
@@ -264,7 +264,7 @@ const isCreator = async (req, res) => {
     })
     return false
   }
-  if (postFound.UserId == res.locals.user.id || userIsAdmin.dataValues.isAdmin == true) {
+  if (postFound.UserId == res.locals.user.id || res.locals.user.isAdmin) {
     return postFound
   }
   res.status(403).json({

@@ -26,7 +26,6 @@ app.use((req, res, next) => {
 })
 
 app.use(express.json())
-
 app.use(cookieParser())
 app.use('/pictures', express.static(path.join(__dirname, 'pictures')))
 // jwt
@@ -38,6 +37,10 @@ app.get('/jwtid', checkUser, requireAuth, (req, res) => {
 app.use('/auth', authRoutes)
 app.use('/user', userRoutes)
 app.use('/post', postRoutes)
+app.use((req, res, next) => {
+  console.log('test')
+  next()
+})
 app.use('/post', commentRoutes)
 app.use('/password-reset', pwdresetRoutes)
 
