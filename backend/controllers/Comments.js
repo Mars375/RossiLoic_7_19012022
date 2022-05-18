@@ -4,12 +4,12 @@ module.exports.createComment = async (req, res) => {
   let userFound
   let postFound
   try {
-    userFound = await models.User.findOne({ 
+    userFound = await models.User.findOne({
       attributes: ["id", "username", "email"],
       where: { id: res.locals.user.id },
     })
   }
-  catch(error) {
+  catch (error) {
     return res.status(500).json({ error })
   }
   if (!userFound)
@@ -25,14 +25,14 @@ module.exports.createComment = async (req, res) => {
   if (!postFound)
     return res.status(404).json({ 'error': 'Post not found' })
   try {
-    const comment = await models.Comment.create({ 
+    const comment = await models.Comment.create({
       content: req.body.content,
       postId: req.params.postId,
       userId: res.locals.user.id
     })
     res.status(201).json({ comment, 'message': 'Comment created' })
   }
-  catch(error) {
+  catch (error) {
     console.log(error);
     return res.status(500).json({ error })
   }
@@ -43,36 +43,32 @@ module.exports.deleteComment = async (req, res) => {
   let userIsAdmin
   try {
     commentFound = await models.Comment.findOne({
-      where: { id: req.params.commentId } 
+      where: { id: req.params.commentId }
     })
   }
-  catch(error) {
+  catch (error) {
     return res.status(500).json({ error })
   }
-  if (commentFound){
-    try {
-      userIsAdmin = await models.User.findOne({
-        attributes: ['isAdmin'],
-        where: { id : res.locals.user.id }
-      })
-    }
-    catch(error){
-      return res.status(500).json({ error })
-    }
-    if (res.locals.user.id == commentFound.userId || userIsAdmin.dataValues.isAdmin == true) {
+  if (commentFound) {
+    if (res.locals.user.id == commentFound.userId || res.locals.user.isAdmin) {
       try {
         await models.Comment.destroy({
           where: { id: req.params.commentId }
         })
         res.status(201).json({ 'message': 'Comment deleted' })
       }
-      catch(error) {
+      catch (error) {
         return res.status(500).json({ error })
       }
     }
+    else {
+      return res.status(401).json({ 'error': 'You are not authorized to delete this comment' })
+    }
   }
-  else 
-    return res.status(403).json({ 'error': 'You are not authorized to perform this operation.'})
+  else {
+    return res.status(404).json({ 'error': 'Comment not found' })
+
+  }
 }
 
 module.exports.updateComment = async (req, res) => {
@@ -81,35 +77,35 @@ module.exports.updateComment = async (req, res) => {
   console.log(req.body);
   try {
     commentFound = await models.Comment.findOne({
-      where: { id: req.params.commentId } 
+      where: { id: req.params.commentId }
     })
   }
-  catch(error) {
+  catch (error) {
     return res.status(500).json({ error })
   }
-  if (commentFound){
+  if (commentFound) {
     try {
       userIsAdmin = await models.User.findOne({
         attributes: ['isAdmin'],
-        where: { id : res.locals.user.id }
+        where: { id: res.locals.user.id }
       })
     }
-    catch(error){
+    catch (error) {
       return res.status(500).json({ error })
     }
     if (res.locals.user.id == commentFound.userId || userIsAdmin.dataValues.isAdmin == true) {
       try {
-        await commentFound.update({ 
+        await commentFound.update({
           content: req.body.content
         })
         res.status(201).json({ 'message': 'Comment update' })
       }
-      catch(error) {
+      catch (error) {
         console.log(error);
         return res.status(500).json({ error })
       }
     }
   }
-  else 
-    return res.status(403).json({ 'error': 'You are not authorized to perform this operation.'})
+  else
+    return res.status(403).json({ 'error': 'You are not authorized to perform this operation.' })
 }

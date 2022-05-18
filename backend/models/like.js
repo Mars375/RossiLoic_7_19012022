@@ -15,10 +15,9 @@ module.exports = (sequelize, DataTypes) => {
         key: 'id'
       }
     },
-    isLike: DataTypes.INTEGER
   })
 
-  Like.associate = function(models) {
+  Like.associate = function (models) {
     // associations can be defined here
     models.User.belongsToMany(models.Post, {
       onDelete: 'CASCADE',

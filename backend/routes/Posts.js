@@ -18,7 +18,7 @@ router.delete('/:id', checkUser, postCtrl.deletePost)
 
 //Like
 router.post('/:postId/like', checkUser, likeCtrl.likePost)
-router.post('/:postId/dislike', checkUser, likeCtrl.dislikePost)
+router.get('/:postId/like', likeCtrl.getLike)
 
 
 module.exports = router

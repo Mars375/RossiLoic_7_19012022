@@ -7,7 +7,6 @@ module.exports.checkUser = (req, res, next) => {
   if (token) {
     jwt.verify(token, process.env.SECRET_TOKEN, async (error, decodedToken) => {
       if (error) {
-        console.log('test');
         res.locals.user = null
         res.cookie('jwt', '', {
           maxAge: 0
@@ -66,7 +65,7 @@ module.exports.isUser = async (req, res, next) => {
       return next()
     const userProfil = await models.User.findOne({
       where: {
-        id: res.locals.user.id
+        id: req.params.id
       },
       attributes: {
         exclude: ['password']

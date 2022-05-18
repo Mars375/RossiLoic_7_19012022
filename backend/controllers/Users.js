@@ -66,6 +66,7 @@ module.exports.getOneUser = async (req, res) => {
 
 module.exports.updateUser = async (req, res) => {
   let picture
+  console.log(req.body);
   try {
     const {
       email,
@@ -75,7 +76,7 @@ module.exports.updateUser = async (req, res) => {
       password,
       bio,
       isAdmin,
-    } = JSON.parse(req.body.user)
+    } = req.body
     const user = await models.User.findOne({
       where: {
         id: req.params.id

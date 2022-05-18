@@ -12,7 +12,7 @@ module.exports.getOnePost = async (req, res) => {
       },
       {
         model: models.Comment,
-        attributes: ['content', 'userId', 'createdAt', 'id']
+        attributes: ['content', 'userId', 'updatedAt', 'createdAt', 'id']
       }]
     })
     if (!post)
@@ -125,7 +125,6 @@ module.exports.getAllPostByCategory = async (req, res) => {
 }
 
 module.exports.createPost = async (req, res) => {
-  console.log(req.body);
   const {
     title,
     content,
@@ -169,17 +168,14 @@ module.exports.createPost = async (req, res) => {
 }
 
 module.exports.updatePost = async (req, res) => {
+  console.log(req.body);
+
   const {
     title,
     content,
-  } = JSON.parse(req.body.post)
+  } = req.body
   let attachmentURL
-  if (!title || title.length <= 2) {
-    return res.status(400).json({
-      'error': 'invalid parameters'
-    })
 
-  }
   try {
     const user = await models.User.findOne({
       attributes: ['id', 'email', 'username'],
