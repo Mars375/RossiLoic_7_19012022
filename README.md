@@ -30,4 +30,4 @@ Go in either backend or frontend
   cd frontend
 ```
 
-Follow the README.md
+Follow the README.md inside the folder you're in
