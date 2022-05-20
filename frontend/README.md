@@ -1,24 +1,36 @@
-# frontend
 
-## Project setup
-```
-npm install
-```
+# Groupomania-backend
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+Creation of a corporate social network using : 
+  - **Vue 2, vuetify, vuex, vuerouter for the first front**
+  - Vue 3, quasar, pinia, vuerouter for the second front
+  - Express, sequelize js for the back.
 
-### Compiles and minifies for production
-```
-npm run build
-```
+    
 
-### Lints and fixes files
-```
-npm run lint
+
+## Run Locally
+
+Go to the front project directory
+
+```bash
+  cd RossiLoic_7_19012022/frontend
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+Install dependencies
+
+```bash
+  npm install
+```
+
+Start the server
+
+```bash
+  npm run serve
+```
+
+
+## Authors
+
+- [@Mars375](https://github.com/Mars375)
+
