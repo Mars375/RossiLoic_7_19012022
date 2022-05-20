@@ -8,12 +8,6 @@ Creation of a corporate social network using :
 
 ## Run Locally
 
-Clone the project
-
-```bash
-  git clone https://github.com/Mars375/RossiLoic_7_19012022.git
-```
-
 Go to the backend project directory
 
 ```bash
