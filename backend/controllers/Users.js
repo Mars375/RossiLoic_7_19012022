@@ -79,7 +79,17 @@ module.exports.updateUser = async (req, res) => {
     const user = await models.User.findOne({
       where: {
         id: req.params.id
-      }
+      },
+      include: [{
+        model: models.Follow,
+        attributes: ['personFollowing', 'personBeingFollowed']
+      }],
+      attributes: {
+        exclude: [
+          'password',
+          'isAdmin'
+        ],
+      },
     })
     if (!user) {
       return res.status(404).json({
@@ -97,15 +107,17 @@ module.exports.updateUser = async (req, res) => {
       if (passwordSecure.score >= 2 || password.toLowerCase().includes('groupomania')) {
         try {
           const hash = await bcrypt.hash(password, 10)
-          await models.User.update({
+          await user.update({
             password: hash,
           })
         } catch (error) {
+          console.log(error);
           return res.status(403).json({
             error
           })
         }
       } else {
+        console.log('hey');
         return res.status(401).json({
           message: passwordSecure.feedback.warning + "\n" + passwordSecure.feedback.suggestions
         })
@@ -124,7 +136,8 @@ module.exports.updateUser = async (req, res) => {
     // console.log(user);
     await user.save()
     res.status(200).json({
-      message: 'Your profil is update !'
+      message: 'Your profil is update !',
+      user
     })
   } catch (error) {
     console.log(error);

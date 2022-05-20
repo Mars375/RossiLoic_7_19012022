@@ -5,9 +5,10 @@ require('dotenv').config()
 
 const models = require('../models')
 
-const createToken = (id) => {
+const createToken = (id, isAdmin) => {
   return jwt.sign({
-    id
+    id,
+    isAdmin
   }, process.env.SECRET_TOKEN, {
   })
 }
@@ -53,8 +54,9 @@ module.exports.signup = async (req, res, next) => {
         lastname,
         firstname,
         bio,
+        isAdmin: false,
       })
-      const token = createToken(newUser.id)
+      const token = createToken(newUser.id, newUser.isAdmin)
       if (staySign) {
         res.cookie('jwt', token, {
           maxAge: 7 * 24 * 3600000
@@ -111,7 +113,7 @@ module.exports.login = async (req, res, next) => {
       return res.status(401).json({
         message: 'Wrong Mail or Password !'
       })
-    const token = createToken(user.id)
+    const token = createToken(user.id, user.isAdmin)
     if (staySign) {
       res.cookie('jwt', token, {
         maxAge: 7 * 24 * 3600000
@@ -183,12 +185,13 @@ module.exports.loginGoogle = async (req, res) => {
         lastname: userInfo.data.family_name,
         firstname: userInfo.data.given_name,
         picture: userInfo.data.picture,
+        isAdmin: false,
       })
     }
     else {
       newUser = user
     }
-    const token = createToken(newUser.id)
+    const token = createToken(newUser.id, newUser.isAdmin)
     res.cookie('jwt', token, {
       maxAge: 7 * 24 * 3600000
     })
