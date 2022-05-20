@@ -1,13 +1,10 @@
 
 # Groupomania-backend
 
-    Creation of a corporate social network using : 
-      - Vue 2, vuetify, vuex, vuerouter for the first front
-      - Vue 3, quasar, pinia, vuerouter for the second front
-      - **Express, sequelize js for the back.**
-
-    
-
+Creation of a corporate social network using : 
+   - Vue 2, vuetify, vuex, vuerouter for the first front
+   - Vue 3, quasar, pinia, vuerouter for the second front
+   - **Express, sequelize js for the back.**
 
 ## Run Locally
 
