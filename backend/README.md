@@ -28,6 +28,35 @@ Start the server
   nodemon server
 ```
 
+## Server configuration
+
+To run this project, you will need to add the following config to your config.json file
+
+```js
+{
+  "development": {
+    "username": "",
+    "password": "",
+    "database": "",
+    "host": "",
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "",
+    "password": "",
+    "database": "",
+    "host": "",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "",
+    "password": "",
+    "database": "",
+    "host": "",
+    "dialect": "mysql"
+  }
+}
+```
 
 ## Environment Variables
 
@@ -35,6 +64,7 @@ To run this project, you will need to add the following environment variables to
 
 `SECRET_TOKEN=`
 
+**Only if you want to use reset password option**
 `HOST=`
 `EMAIL=`
 `PASSWORD=`
