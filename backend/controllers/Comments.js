@@ -74,7 +74,6 @@ module.exports.deleteComment = async (req, res) => {
 module.exports.updateComment = async (req, res) => {
   let commentFound
   let userIsAdmin
-  console.log(req.body);
   try {
     commentFound = await models.Comment.findOne({
       where: { id: req.params.commentId }

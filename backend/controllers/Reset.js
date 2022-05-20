@@ -31,7 +31,6 @@ module.exports.sendEmail = async (req, res) => {
     })
     token = token.replace(/\./g, '!')
     const url = `${process.env.URL}/reset/${token}`
-    console.log(url);
     sendEmail(email, url)
     res.status(200).json({
       message: 'Email sent'
@@ -53,7 +52,6 @@ module.exports.reset = async (req, res) => {
       'error': 'missing parameters'
     });
   }
-  console.log(password);
   try {
     const token = req.params.token.replace(/!/g, '.')
     const decoded = jwt.verify(token, process.env.SECRET_TOKEN)

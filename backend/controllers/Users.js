@@ -65,7 +65,6 @@ module.exports.getOneUser = async (req, res) => {
 
 module.exports.updateUser = async (req, res) => {
   let picture
-  console.log(req.body);
   try {
     const {
       email,
@@ -117,7 +116,6 @@ module.exports.updateUser = async (req, res) => {
           })
         }
       } else {
-        console.log('hey');
         return res.status(401).json({
           message: passwordSecure.feedback.warning + "\n" + passwordSecure.feedback.suggestions
         })
@@ -133,7 +131,6 @@ module.exports.updateUser = async (req, res) => {
       firstname: firstname || user.firstname,
       picture: picture || user.picture,
     })
-    // console.log(user);
     await user.save()
     res.status(200).json({
       message: 'Your profil is update !',
@@ -202,7 +199,6 @@ module.exports.deleteUser = async (req, res) => {
   if (postLiked) {
     const ids = []
     postLiked.forEach(like => ids.push(like.postId))
-    console.log(postLiked);
     for (const element of ids) {
       try {
         postFound = await models.Post.findOne({

@@ -168,8 +168,6 @@ module.exports.createPost = async (req, res) => {
 }
 
 module.exports.updatePost = async (req, res) => {
-  console.log(req.body);
-
   const {
     title,
     content,
