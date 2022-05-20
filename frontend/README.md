@@ -11,8 +11,6 @@ Creation of a corporate social network using :
 
 ## Run Locally
 
-Clone the project
-
 Go to the front project directory
 
 ```bash
