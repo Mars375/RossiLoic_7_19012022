@@ -42,7 +42,7 @@ To run this project, you will need to add the following environment variables to
 `URL=`
 
 
-If you want to use Google connexion, you also need :
+**Only if you want to use Google connexion, you also need :**
 
 `GOOGLE_CLIENT_ID=`
 `GOOGLE_CLIENT_SECRET=`
