@@ -126,30 +126,34 @@ module.exports.getAllPostByCategory = async (req, res) => {
 }
 
 module.exports.createPost = async (req, res) => {
-  const {
-    title,
-    content,
-  } = req.body
-  const { category } = req.body
-  let attachmentURL
-  if (!content && !req.file)
-    return res.status(401).json({
-      'error': 'invalid parameters'
-    })
+  const { title, content, category } = req.body;
+  let attachmentURL;
+
+  console.log('Request Body:', req.body);
+  console.log('File:', req.file);
+
+  if (!content && !req.file) {
+    return res.status(401).json({ 'error': 'invalid parameters' });
+  }
+
   try {
     const user = await models.User.findOne({
       attributes: ['id', 'email', 'username'],
-      where: {
-        id: res.locals.user.id
-      }
-    })
-    if (!user)
-      return res.status(404).json(error)
-    //Récupération du corps du post
-    if (!req.file)
-      attachmentURL == null
-    else
-      attachmentURL = `${req.protocol}://${req.get('host')}/pictures/${req.file.filename}`
+      where: { id: res.locals.user.id }
+    });
+
+    if (!user) {
+      return res.status(404).json({ 'error': 'User not found' });
+    }
+
+    if (req.file) {
+      attachmentURL = `${req.protocol}://${req.get('host')}/pictures/${req.file.filename}`;
+    } else {
+      attachmentURL = null;
+    }
+
+    console.log('Attachment URL:', attachmentURL);
+
     try {
       const post = await models.Post.create({
         title,
@@ -157,14 +161,16 @@ module.exports.createPost = async (req, res) => {
         category,
         attachment: attachmentURL,
         UserId: user.id
-      })
-      res.status(201).json({ 'message': 'Post is created', post })
+      });
+
+      res.status(201).json({ 'message': 'Post is created', post });
     } catch (error) {
-      return res.status(500).json(error)
+      console.error('Error creating post:', error);
+      return res.status(500).json({ 'error': 'Error creating post' });
     }
   } catch (error) {
-    console.log(error);
-    return res.status(500).json(error)
+    console.error('Error finding user:', error);
+    return res.status(500).json({ 'error': 'Error finding user' });
   }
 }
 
