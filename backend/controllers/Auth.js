@@ -58,7 +58,9 @@ module.exports.signup = async (req, res, next) => {
       })
       const token = createToken(newUser.id, newUser.isAdmin)
       res.cookie('jwt', token, {
-        sameSite: 'None' // Définir SameSite sur None
+        httpOnly: true,
+        secure: true,
+        sameSite: 'Strict'
       })
       if (staySign) {
         res.cookie('jwt', token, {
