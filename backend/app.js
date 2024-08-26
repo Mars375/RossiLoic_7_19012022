@@ -18,16 +18,13 @@ const {
 
 // Configuration CORS
 app.use(cors({
-  origin: ['http://192.168.1.3:8080', 'http://localhost:8080', 'http://localhost:8081', 'http://192.168.1.3:8081', 'http://10.93.169.224:8080'],
+  origin: '*',
   credentials: true
 }));
 
 // Middleware pour vérifier les en-têtes de réponse
 app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  if (origin) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-  }
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT');
   res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
