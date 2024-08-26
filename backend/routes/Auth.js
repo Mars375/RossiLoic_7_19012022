@@ -8,7 +8,7 @@ router.post('/login', authCtrl.login)
 router.post('/logout', authCtrl.logout)
 router.post('/google', authCtrl.loginGoogle)
 router.get('/check-auth', checkUser, (req, res) => {
-  res.status(200).json({ isLoggedIn: true, user: req.user });
+  res.status(200).json({ isLoggedIn: true, user: res.locals.user });
 });
 
 module.exports = router
