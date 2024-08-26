@@ -58,7 +58,7 @@ module.exports.signup = async (req, res, next) => {
       })
       const token = createToken(newUser.id, newUser.isAdmin)
       res.cookie('jwt', token, {
-        sameSite: 'None'
+        sameSite: 'None' // Définir SameSite sur None
       })
       if (staySign) {
         res.cookie('jwt', token, {
@@ -118,7 +118,9 @@ module.exports.login = async (req, res, next) => {
       })
     const token = createToken(user.id, user.isAdmin)
     res.cookie('jwt', token, {
-      sameSite: 'None'
+      httpOnly: true,
+      secure: true,
+      sameSite: 'Strict'
     })
     if (staySign) {
       res.cookie('jwt', token, {
@@ -200,8 +202,8 @@ module.exports.loginGoogle = async (req, res) => {
     const token = createToken(newUser.id, newUser.isAdmin)
     res.cookie('jwt', token, {
       httpOnly: true,
-      secure: true, // Assurez-vous que Secure est défini sur true
-      sameSite: 'None' // Définir SameSite sur None
+      secure: true,
+      sameSite: 'Strict'
     })
 
     res.status(200).json({
