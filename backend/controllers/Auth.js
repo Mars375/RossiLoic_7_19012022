@@ -5,12 +5,11 @@ require('dotenv').config()
 
 const models = require('../models')
 
-const createToken = (id, isAdmin, expiresIn) => {
+const createToken = (id, isAdmin) => {
   return jwt.sign({
     id,
     isAdmin
   }, process.env.SECRET_TOKEN, {
-    expiresIn
   })
 }
 
