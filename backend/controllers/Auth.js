@@ -67,18 +67,9 @@ module.exports.signup = async (req, res, next) => {
       res.cookie('jwt', token, {
         httpOnly: true,
         secure: true,
-        sameSite: 'Strict'
+        sameSite: 'Strict',
+        maxAge: staySign ? 7 * 24 * 3600000 : 1 * 24 * 3600000 // 7 jours ou 1 jour
       });
-
-      if (staySign) {
-        res.cookie('jwt', token, {
-          maxAge: 7 * 24 * 3600000 // 7 jours
-        });
-      } else {
-        res.cookie('jwt', token, {
-          maxAge: 1 * 24 * 3600000 // 1 jour
-        });
-      }
 
       res.status(201).json({
         user: {
@@ -136,18 +127,9 @@ module.exports.login = async (req, res, next) => {
     res.cookie('jwt', token, {
       httpOnly: true,
       secure: true,
-      sameSite: 'Strict'
+      sameSite: 'Strict',
+      maxAge: staySign ? 7 * 24 * 3600000 : 1 * 24 * 3600000 // 7 jours ou 1 jour
     });
-
-    if (staySign) {
-      res.cookie('jwt', token, {
-        maxAge: 7 * 24 * 3600000 // 7 jours
-      });
-    } else {
-      res.cookie('jwt', token, {
-        maxAge: 1 * 24 * 3600000 // 1 jour
-      });
-    }
 
     res.status(200).json({
       user: {
