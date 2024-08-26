@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const authCtrl = require('../controllers/Auth')
-const { verifyToken } = require('../middleware/auth')
+const { checkUser } = require('../middleware/auth')
 
 router.post('/signup', authCtrl.signup)
 router.post('/login', authCtrl.login)
