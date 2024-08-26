@@ -45,10 +45,11 @@ module.exports.getAllPosts = async (req, res) => {
         ['createdAt', 'DESC']
       ]
     })
-    if (!posts.length)
-      return res.status(404).json({
+    if (!posts.length) {
+      return res.status(200).json({
         message: 'Post not found'
       })
+    }
     res.status(200).json({
       posts
     })

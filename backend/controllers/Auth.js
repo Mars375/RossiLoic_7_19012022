@@ -5,11 +5,12 @@ require('dotenv').config()
 
 const models = require('../models')
 
-const createToken = (id, isAdmin) => {
+const createToken = (id, isAdmin, expiresIn) => {
   return jwt.sign({
     id,
     isAdmin
   }, process.env.SECRET_TOKEN, {
+    expiresIn
   })
 }
 
@@ -57,6 +58,11 @@ module.exports.signup = async (req, res, next) => {
         isAdmin: false,
       })
       const token = createToken(newUser.id, newUser.isAdmin)
+      res.cookie('jwt', token, {
+        httpOnly: true,
+        secure: true, // Assurez-vous que Secure est défini sur true
+        sameSite: 'None' // Définir SameSite sur None
+      })
       if (staySign) {
         res.cookie('jwt', token, {
           maxAge: 7 * 24 * 3600000
@@ -114,6 +120,11 @@ module.exports.login = async (req, res, next) => {
         message: 'Wrong Mail or Password !'
       })
     const token = createToken(user.id, user.isAdmin)
+    res.cookie('jwt', token, {
+      httpOnly: true,
+      secure: true, // Assurez-vous que Secure est défini sur true
+      sameSite: 'None' // Définir SameSite sur None
+    })
     if (staySign) {
       res.cookie('jwt', token, {
         maxAge: 7 * 24 * 3600000
@@ -193,7 +204,9 @@ module.exports.loginGoogle = async (req, res) => {
     }
     const token = createToken(newUser.id, newUser.isAdmin)
     res.cookie('jwt', token, {
-      maxAge: 7 * 24 * 3600000
+      httpOnly: true,
+      secure: true, // Assurez-vous que Secure est défini sur true
+      sameSite: 'None' // Définir SameSite sur None
     })
 
     res.status(200).json({
