@@ -67,7 +67,7 @@ module.exports.signup = async (req, res, next) => {
       res.cookie('jwt', token, {
         httpOnly: true,
         secure: true,
-        sameSite: 'None',
+        sameSite: 'Lax',
         maxAge: staySign ? 7 * 24 * 3600000 : 1 * 24 * 3600000 // 7 jours ou 1 jour
       });
 
@@ -127,7 +127,7 @@ module.exports.login = async (req, res, next) => {
     res.cookie('jwt', token, {
       httpOnly: true,
       secure: true,
-      sameSite: 'None',
+      sameSite: 'Lax',
       maxAge: staySign ? 7 * 24 * 3600000 : 1 * 24 * 3600000 // 7 jours ou 1 jour
     });
 
@@ -200,7 +200,7 @@ module.exports.loginGoogle = async (req, res) => {
     res.cookie('jwt', token, {
       httpOnly: true,
       secure: true,
-      sameSite: 'None'
+      sameSite: 'Lax'
     });
 
     res.status(200).json({
