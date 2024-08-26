@@ -8,6 +8,7 @@ const postRoutes = require('./routes/Posts')
 const commentRoutes = require('./routes/Comments')
 const pwdresetRoutes = require('./routes/Pwd-reset')
 const cookieParser = require('cookie-parser')
+const { sequelize } = require('./models');
 
 const {
   checkUser,
@@ -24,6 +25,15 @@ app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS')
   next()
 })
+
+app.get('/test-connection', async (req, res) => {
+  try {
+    await sequelize.authenticate();
+    res.status(200).json({ message: 'Connection has been established successfully.' });
+  } catch (error) {
+    res.status(500).json({ message: 'Unable to connect to the database.', error });
+  }
+});
 
 app.use(express.json())
 app.use(cookieParser())

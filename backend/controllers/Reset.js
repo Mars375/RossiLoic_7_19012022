@@ -1,5 +1,5 @@
 const models = require('../models')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken')
 const zxcvbn = require('zxcvbn')
 const sendEmail = require('../utils/sendEmail')

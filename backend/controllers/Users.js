@@ -1,6 +1,6 @@
 const models = require('../models')
 const zxcvbn = require('zxcvbn')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs');
 
 module.exports.getAllUsers = async (req, res) => {
   try {
