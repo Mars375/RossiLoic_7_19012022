@@ -17,7 +17,7 @@ const {
 } = require('./middleware/auth');
 
 // Configuration CORS pour des origines spécifiques
-const allowedOrigins = ['http://localhost:8080', 'https://groupomania-back.onrender.com'];
+const allowedOrigins = ['http://localhost:8080', 'https://groupomania-back.onrender.com', 'https://groupomania-front.onrender.com'];
 const corsOptions = {
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.indexOf(origin) !== -1) {
