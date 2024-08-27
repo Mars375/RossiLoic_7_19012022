@@ -1,5 +1,7 @@
 const http = require('http')
-const app = require('./app')
+const express = require('express')
+const cleanup = require('./utils/cleanup')
+const app = express()
 require('dotenv').config()
 
 const normalizePort = val => {
@@ -44,5 +46,9 @@ server.on('listening', () => {
   const bind = typeof address === 'string' ? 'pipe ' + address : 'port ' + port
   console.log('Listening on ' + bind)
 })
+
+// Exécuter le nettoyage toutes les 24 heures
+const oneDayInMilliseconds = 24 * 60 * 60 * 1000
+setInterval(cleanup, oneDayInMilliseconds)
 
 server.listen(port)

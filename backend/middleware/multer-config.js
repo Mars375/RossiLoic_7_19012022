@@ -20,7 +20,7 @@ const MIME_TYPES = {
 
 const storage = multer.diskStorage({
   destination: (req, file, callback) => {
-    const dir = 'pictures'
+    const dir = path.join(__dirname, '..', 'tmp', 'uploads')
     // Vérifie si le répertoire existe, sinon le crée
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true })
