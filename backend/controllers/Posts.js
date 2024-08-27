@@ -130,6 +130,9 @@ module.exports.createPost = async (req, res) => {
   const { title, content, category } = req.body;
   let attachmentURL;
 
+  console.log('Request Body:', req.body);
+  console.log('File:', req.file);
+
   if (!content && !req.file) {
     return res.status(401).json({ 'error': 'invalid parameters' });
   }
@@ -191,9 +194,8 @@ module.exports.updatePost = async (req, res) => {
     // Supprimez l'ancienne image de Cloudinary si une nouvelle image est téléchargée
     if (req.file) {
       if (post.attachment) {
-        const publicId = post.attachment.match(/\/(?:v\d+\/)?([^\/]+)\.[^.]+$/)[1];
-        console.log('Public ID to delete:', publicId); // Log du publicId
-        await cloudinary.uploader.destroy(publicId);
+        const publicId = post.attachment.match(/uploads\/(.+)\.[^.]+$/)[1];
+        await cloudinary.uploader.destroy(`uploads/${publicId}`);
       }
       attachmentURL = req.file.path; // URL de la nouvelle image sur Cloudinary
     } else {
@@ -221,9 +223,8 @@ module.exports.deletePost = async (req, res) => {
   try {
     // Supprimez l'image de Cloudinary si elle existe
     if (post.attachment) {
-      const publicId = post.attachment.match(/\/(?:v\d+\/)?([^\/]+)\.[^.]+$/)[1];
-      console.log('Public ID to delete:', publicId); // Log du publicId
-      await cloudinary.uploader.destroy(publicId);
+      const publicId = post.attachment.match(/uploads\/(.+)\.[^.]+$/)[1];
+      await cloudinary.uploader.destroy(`uploads/${publicId}`);
     }
 
     await post.destroy();

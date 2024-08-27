@@ -126,8 +126,8 @@ module.exports.updateUser = async (req, res) => {
     // Supprimez l'ancienne image de Cloudinary si une nouvelle image est téléchargée
     if (req.file) {
       if (user.picture) {
-        const publicId = user.picture.split('/').pop().split('.')[0];
-        await cloudinary.uploader.destroy(publicId);
+        const publicId = user.picture.match(/uploads\/(.+)\.[^.]+$/)[1];
+        await cloudinary.uploader.destroy(`uploads/${publicId}`);
       }
       picture = req.file.path; // URL de la nouvelle image sur Cloudinary
     } else {
@@ -163,79 +163,31 @@ module.exports.updateBackground = async (req, res) => {
         id: req.params.id
       }
     });
-    if (!user)
+    if (!user) {
       return res.status(404).json({
         message: 'User not found'
       });
-  } catch (error) {
-    return res.status(500).json({
-      error
-    });
-  }
-  if (!req.file)
-    return res.status(200).json({
-      'message': 'No update here'
-    });
-  try {
-    await user.update({
-      background: req.file.path // URL de l'image sur Cloudinary
-    });
+    }
+    if (req.file) {
+      const publicId = user.background.match(/uploads\/(.+)\.[^.]+$/)[1];
+      console.log('Public ID to delete:', publicId); // Log du publicId
+      await cloudinary.uploader.destroy(`uploads/${publicId}`);
+      user.background = req.file.path; // URL de la nouvelle image sur Cloudinary
+    }
+    await user.save();
     res.status(200).json({
-      'message': 'You have a new background!',
-      background: user.background
+      message: 'Background updated successfully!',
+      user
     });
   } catch (error) {
-    return res.status(500).json({
+    console.log(error);
+    res.status(500).json({
       error
     });
   }
 };
 
 module.exports.deleteUser = async (req, res) => {
-  let postLiked;
-  let postFound;
-  try {
-    postLiked = await models.Like.findAll({
-      raw: true,
-      where: {
-        userId: req.params.id
-      },
-      attributes: ['postId']
-    });
-  } catch (error) {
-    return res.status(500).json({
-      error
-    });
-  }
-  if (postLiked) {
-    const ids = [];
-    postLiked.forEach(like => ids.push(like.postId));
-    for (const element of ids) {
-      try {
-        postFound = await models.Post.findOne({
-          where: {
-            id: element
-          }
-        });
-      } catch (error) {
-        return res.status(500).json({
-          error
-        });
-      }
-      try {
-        await postFound.update({
-          where: {
-            id: element
-          },
-          likes: --postFound.likes
-        });
-      } catch (error) {
-        return res.status(500).json({
-          error
-        });
-      }
-    }
-  }
   try {
     const user = await models.User.findOne({
       where: {
@@ -249,8 +201,8 @@ module.exports.deleteUser = async (req, res) => {
 
     // Supprimez l'image de Cloudinary si elle existe
     if (user.picture) {
-      const publicId = user.picture.split('/').pop().split('.')[0];
-      await cloudinary.uploader.destroy(publicId);
+      const publicId = user.picture.match(/uploads\/(.+)\.[^.]+$/)[1];
+      await cloudinary.uploader.destroy(`uploads/${publicId}`);
     }
 
     await user.destroy();
