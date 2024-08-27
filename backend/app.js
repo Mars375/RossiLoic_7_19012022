@@ -46,7 +46,7 @@ app.use((req, res, next) => {
 // Utilisation de cookie-parser avant les routes
 app.use(cookieParser());
 app.use(express.json());
-app.use('/pictures', express.static(path.join(__dirname, 'pictures')));
+app.use('/uploads', express.static(path.join(__dirname, '..', 'tmp', 'uploads')));
 
 // jwt
 app.get('/jwtid', checkUser, requireAuth, (req, res) => {
