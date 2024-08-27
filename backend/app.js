@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const path = require('path');
+const fs = require('fs');
 const userRoutes = require('./routes/User');
 const authRoutes = require('./routes/Auth');
 const postRoutes = require('./routes/Posts');
@@ -15,6 +16,12 @@ const {
   checkUser,
   requireAuth
 } = require('./middleware/auth');
+
+// Créer le répertoire tmp/uploads s'il n'existe pas
+const uploadDir = path.join(__dirname, '..', 'tmp', 'uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
 
 // Configuration CORS pour des origines spécifiques
 const allowedOrigins = ['http://localhost:8080', 'https://groupomania-back.onrender.com', 'https://groupomania-front.onrender.com'];
@@ -49,7 +56,7 @@ app.options('*', cors(corsOptions));
 // Utilisation de cookie-parser avant les routes
 app.use(cookieParser());
 app.use(express.json());
-app.use('/uploads', express.static(path.join(__dirname, '..', 'tmp', 'uploads')));
+app.use('/uploads', express.static(uploadDir));
 
 // jwt
 app.get('/jwtid', checkUser, requireAuth, (req, res) => {
