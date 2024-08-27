@@ -1,4 +1,5 @@
 const models = require('../models')
+const path = require('path')
 
 module.exports.getOnePost = async (req, res) => {
   try {
@@ -147,7 +148,7 @@ module.exports.createPost = async (req, res) => {
     }
 
     if (req.file) {
-      attachmentURL = `${req.protocol}://${req.get('host')}/pictures/${req.file.filename}`;
+      attachmentURL = `${req.protocol}://${req.get('host')}/tmp/uploads/${req.file.filename}`;
     } else {
       attachmentURL = null;
     }
@@ -197,7 +198,7 @@ module.exports.updatePost = async (req, res) => {
   if (!req.file)
     attachmentURL == null
   else
-    attachmentURL = `${req.protocol}://${req.get('host')}/pictures/${req.file.filename}`
+    attachmentURL = `${req.protocol}://${req.get('host')}/tmp/uploads/${req.file.filename}`
   try {
     const post = await isCreator(req, res)
     if (!post)
