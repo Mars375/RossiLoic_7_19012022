@@ -48,6 +48,9 @@ module.exports.requireAuth = (req, res, next) => {
   if (token) {
     jwt.verify(token, process.env.SECRET_TOKEN, async (error, decodedToken) => {
       if (error) {
+        res.cookie('jwt', '', {
+          maxAge: 0
+        })
         res.status(401).json({
           isAuthenticated: false,
           message: 'Invalid token'
