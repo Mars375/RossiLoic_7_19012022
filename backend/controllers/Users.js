@@ -3,6 +3,12 @@ const zxcvbn = require('zxcvbn');
 const bcrypt = require('bcryptjs');
 const cloudinary = require('cloudinary').v2;
 
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
 module.exports.getAllUsers = async (req, res) => {
   try {
     const users = await models.User.findAll({

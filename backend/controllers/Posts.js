@@ -2,6 +2,12 @@ const models = require('../models');
 const path = require('path');
 const cloudinary = require('cloudinary').v2;
 
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
 module.exports.getOnePost = async (req, res) => {
   try {
     const post = await models.Post.findOne({
@@ -131,9 +137,6 @@ module.exports.createPost = async (req, res) => {
   const { title, content, category } = req.body;
   let attachmentURL;
 
-  console.log('Request Body:', req.body);
-  console.log('File:', req.file);
-
   if (!content && !req.file) {
     return res.status(401).json({ 'error': 'invalid parameters' });
   }
@@ -222,7 +225,6 @@ module.exports.deletePost = async (req, res) => {
   const post = await isCreator(req, res);
   if (!post) return;
   try {
-    // Supprimez l'image de Cloudinary si elle existe
     if (post.attachment) {
       const publicId = post.attachment.split('/').pop().split('.')[0];
       await cloudinary.uploader.destroy(publicId);
