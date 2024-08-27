@@ -226,7 +226,9 @@ module.exports.deletePost = async (req, res) => {
   if (!post) return;
   try {
     if (post.attachment) {
+      console.log('post.attachment : ' + post.attachment);
       const publicId = post.attachment.split('/').pop().split('.')[0];
+      console.log('publicId : ' + publicId);
       await cloudinary.uploader.destroy(publicId);
     }
 

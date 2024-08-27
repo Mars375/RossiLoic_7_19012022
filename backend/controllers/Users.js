@@ -223,7 +223,6 @@ module.exports.deleteUser = async (req, res) => {
             id: element
           }
         });
-        console.log('ele' + element);
       } catch (error) {
         return res.status(500).json({
           error
