@@ -35,7 +35,7 @@ fs.access(uploadDir, fs.constants.W_OK, (err) => {
 });
 
 // Configuration CORS pour des origines spécifiques
-const allowedOrigins = ['http://localhost:8080', 'https://groupomania-back.onrender.com', 'https://groupomania-front.onrender.com'];
+const allowedOrigins = ['http://localhost:8080', 'https://groupomania-back.onrender.com', 'https://groupomania-front.onrender.com', 'https://groupomania-mu.vercel.app/'];
 const corsOptions = {
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.indexOf(origin) !== -1) {
