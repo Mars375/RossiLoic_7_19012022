@@ -1,42 +1,24 @@
-const multer = require('multer')
-const fs = require('fs')
-const path = require('path')
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const multer = require('multer');
 
-const MIME_TYPES = {
-  'image/jpg': 'jpg',
-  'image/jpeg': 'jpg',
-  'image/png': 'png',
-  'image/webp': 'webp',
-  'image/gif': 'gif',
-  'video/x-msvideo': 'avi',
-  'video/mp4': 'mp4',
-  'video/mpeg': 'mpeg',
-  'video/ogg': 'ogv',
-  'video/mp2t': 'ts',
-  'video/webm': 'webm',
-  'video/3gpp': '3gp',
-  'video/3gpp2': '3g2'
-}
+// Configurez Cloudinary avec vos informations d'API
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
-const storage = multer.diskStorage({
-  destination: (req, file, callback) => {
-    const dir = path.join(__dirname, '..', 'tmp', 'uploads')
-    // Vérifie si le répertoire existe, sinon le crée
-    if (!fs.existsSync(dir)) {
-      console.log(`Creating directory: ${dir}`)
-      fs.mkdirSync(dir, { recursive: true })
-    } else {
-      console.log(`Directory already exists: ${dir}`)
-    }
-    callback(null, dir)
-  },
-  filename: (req, file, callback) => {
-    const name = file.originalname.split(' ').join('_').split('.')[0]
-    const extension = MIME_TYPES[file.mimetype]
-    const filename = name + Date.now() + '.' + extension
-    console.log(`Saving file: ${filename}`)
-    callback(null, filename)
+// Configurez le stockage Cloudinary pour Multer
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'uploads', // Dossier dans lequel les fichiers seront stockés sur Cloudinary
+    format: async (req, file) => 'jpg', // Format de l'image
+    public_id: (req, file) => file.originalname.split(' ').join('_').split('.')[0] + Date.now()
   }
-})
+});
 
-module.exports = multer({ storage: storage }).single('image')
+const upload = multer({ storage: storage });
+
+module.exports = upload.single('image');
