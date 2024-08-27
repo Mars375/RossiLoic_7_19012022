@@ -20,7 +20,10 @@ const {
 // Créer le répertoire tmp/uploads s'il n'existe pas
 const uploadDir = path.join(__dirname, '..', 'tmp', 'uploads');
 if (!fs.existsSync(uploadDir)) {
+  console.log(`Creating directory: ${uploadDir}`);
   fs.mkdirSync(uploadDir, { recursive: true });
+} else {
+  console.log(`Directory already exists: ${uploadDir}`);
 }
 
 // Configuration CORS pour des origines spécifiques
@@ -57,6 +60,7 @@ app.options('*', cors(corsOptions));
 app.use(cookieParser());
 app.use(express.json());
 app.use('/uploads', express.static(uploadDir));
+console.log(`Serving static files from: ${uploadDir}`);
 
 // jwt
 app.get('/jwtid', checkUser, requireAuth, (req, res) => {

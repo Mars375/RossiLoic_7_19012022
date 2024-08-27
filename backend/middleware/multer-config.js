@@ -23,14 +23,19 @@ const storage = multer.diskStorage({
     const dir = path.join(__dirname, '..', 'tmp', 'uploads')
     // Vérifie si le répertoire existe, sinon le crée
     if (!fs.existsSync(dir)) {
+      console.log(`Creating directory: ${dir}`)
       fs.mkdirSync(dir, { recursive: true })
+    } else {
+      console.log(`Directory already exists: ${dir}`)
     }
     callback(null, dir)
   },
   filename: (req, file, callback) => {
     const name = file.originalname.split(' ').join('_').split('.')[0]
     const extension = MIME_TYPES[file.mimetype]
-    callback(null, name + Date.now() + '.' + extension)
+    const filename = name + Date.now() + '.' + extension
+    console.log(`Saving file: ${filename}`)
+    callback(null, filename)
   }
 })
 
