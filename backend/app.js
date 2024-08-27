@@ -16,20 +16,11 @@ const {
   requireAuth
 } = require('./middleware/auth');
 
-// Utilisation de cookie-parser avant les routes
-app.use(cookieParser());
-app.use(express.json());
-app.use('/uploads', express.static(path.join(__dirname, '..', 'tmp', 'uploads')));
-
-// jwt
-app.get('/jwtid', checkUser, requireAuth, (req, res) => {
-  res.status(200).send(res.locals.user.id.toString());
-});
-
 // Configuration CORS pour des origines spécifiques
 const allowedOrigins = ['http://localhost:8080', 'https://groupomania-back.onrender.com', 'https://groupomania-front.onrender.com'];
 const corsOptions = {
   origin: function (origin, callback) {
+    console.log('Origin:', origin); // Ajoutez cette ligne pour loguer l'origine
     if (!origin || allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
@@ -53,6 +44,15 @@ app.use((req, res, next) => {
   next();
 });
 
+// Utilisation de cookie-parser avant les routes
+app.use(cookieParser());
+app.use(express.json());
+app.use('/uploads', express.static(path.join(__dirname, '..', 'tmp', 'uploads')));
+
+// jwt
+app.get('/jwtid', checkUser, requireAuth, (req, res) => {
+  res.status(200).send(res.locals.user.id.toString());
+});
 
 // routes
 app.use('/auth', authRoutes);
