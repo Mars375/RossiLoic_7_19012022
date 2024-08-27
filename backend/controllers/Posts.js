@@ -148,7 +148,7 @@ module.exports.createPost = async (req, res) => {
     }
 
     if (req.file) {
-      attachmentURL = `${req.protocol}://${req.get('host')}/tmp/uploads/${req.file.filename}`;
+      attachmentURL = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
     } else {
       attachmentURL = null;
     }
