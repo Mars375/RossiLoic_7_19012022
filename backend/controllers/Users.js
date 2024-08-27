@@ -1,6 +1,7 @@
 const models = require('../models');
 const zxcvbn = require('zxcvbn');
 const bcrypt = require('bcryptjs');
+const cloudinary = require('cloudinary').v2;
 
 module.exports.getAllUsers = async (req, res) => {
   try {
@@ -121,8 +122,18 @@ module.exports.updateUser = async (req, res) => {
         });
       }
     }
-    if (req.file)
-      picture = req.file.path; // URL de l'image sur Cloudinary
+
+    // Supprimez l'ancienne image de Cloudinary si une nouvelle image est téléchargée
+    if (req.file) {
+      if (user.picture) {
+        const publicId = user.picture.split('/').pop().split('.')[0];
+        await cloudinary.uploader.destroy(publicId);
+      }
+      picture = req.file.path; // URL de la nouvelle image sur Cloudinary
+    } else {
+      picture = user.picture; // Conservez l'ancienne URL si aucune nouvelle image n'est téléchargée
+    }
+
     user.set({
       bio: bio || user.bio,
       username: username || user.username,
@@ -133,7 +144,7 @@ module.exports.updateUser = async (req, res) => {
     });
     await user.save();
     res.status(200).json({
-      message: 'Your profil is update !',
+      message: 'Your profile is updated!',
       user
     });
   } catch (error) {
@@ -170,7 +181,7 @@ module.exports.updateBackground = async (req, res) => {
       background: req.file.path // URL de l'image sur Cloudinary
     });
     res.status(200).json({
-      'message': 'You have a new background !',
+      'message': 'You have a new background!',
       background: user.background
     });
   } catch (error) {
@@ -236,12 +247,19 @@ module.exports.deleteUser = async (req, res) => {
       return res.status(404).json({
         message: 'User not found'
       });
+
+    // Supprimez l'image de Cloudinary si elle existe
+    if (user.picture) {
+      const publicId = user.picture.split('/').pop().split('.')[0];
+      await cloudinary.uploader.destroy(publicId);
+    }
+
     await user.destroy();
     res.cookie('jwt', '', {
       maxAge: 0
     });
     return res.status(200).json({
-      message: "Successfully deleted !"
+      message: "Successfully deleted!"
     });
   } catch (error) {
     console.log(error);
@@ -271,7 +289,7 @@ module.exports.follow = async (req, res) => {
       });
     if (res.locals.user.id == idToFollow)
       return res.status(403).json({
-        message: 'You can\'t follow yourself !'
+        message: 'You can\'t follow yourself!'
       });
     if (isFollowing)
       return res.status(403).json({
@@ -312,7 +330,7 @@ module.exports.unfollow = async (req, res) => {
       });
     if (res.locals.user.id == idToFollow)
       return res.status(403).json({
-        message: 'You can\'t unfollow yourself !'
+        message: 'You can\'t unfollow yourself!'
       });
     if (!isFollowing)
       return res.status(403).json({

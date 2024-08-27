@@ -1,5 +1,6 @@
 const models = require('../models');
 const path = require('path');
+const cloudinary = require('cloudinary').v2;
 
 module.exports.getOnePost = async (req, res) => {
   try {
@@ -176,10 +177,7 @@ module.exports.createPost = async (req, res) => {
 };
 
 module.exports.updatePost = async (req, res) => {
-  const {
-    title,
-    content,
-  } = req.body;
+  const { title, content } = req.body;
   let attachmentURL;
 
   try {
@@ -189,49 +187,47 @@ module.exports.updatePost = async (req, res) => {
         id: res.locals.user.id
       }
     });
-    if (!user)
-      return res.status(404).json(error);
-  } catch (error) {
-    return res.status(500).json(error);
-  }
-  //Récupération du corps du post
-  if (!req.file)
-    attachmentURL = null;
-  else
-    attachmentURL = req.file.path; // URL de l'image sur Cloudinary
-  try {
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
     const post = await isCreator(req, res);
-    if (!post)
-      return;
+    if (!post) return;
+
+    // Supprimez l'ancienne image de Cloudinary si une nouvelle image est téléchargée
+    if (req.file) {
+      if (post.attachment) {
+        const publicId = post.attachment.split('/').pop().split('.')[0];
+        await cloudinary.uploader.destroy(publicId);
+      }
+      attachmentURL = req.file.path; // URL de la nouvelle image sur Cloudinary
+    } else {
+      attachmentURL = post.attachment; // Conservez l'ancienne URL si aucune nouvelle image n'est téléchargée
+    }
+
     post.set({
       title: title || post.title,
       content: content || post.content,
       attachment: attachmentURL,
       UserId: post.UserId
     });
-    try {
-      await post.save();
-      return res.status(200).json({
-        'message': 'Ce post a été mis à jour'
-      });
-    } catch (error) {
-      return res.status(500).json({
-        error
-      });
-    }
+
+    await post.save();
+    return res.status(200).json({ message: 'Post updated successfully', post });
   } catch (error) {
     console.log(error);
-    return res.status(500).json({
-      error
-    });
+    return res.status(500).json({ error });
   }
 };
 
 module.exports.deletePost = async (req, res) => {
   const post = await isCreator(req, res);
-  if (!post)
-    return;
+  if (!post) return;
   try {
+    // Supprimez l'image de Cloudinary si elle existe
+    if (post.attachment) {
+      const publicId = post.attachment.split('/').pop().split('.')[0];
+      await cloudinary.uploader.destroy(publicId);
+    }
+
     await post.destroy();
     res.status(200).json({
       message: "Successfully deleted !"
