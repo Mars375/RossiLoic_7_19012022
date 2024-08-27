@@ -30,7 +30,9 @@ const allowedOrigins = [
   'http://localhost:8080',
   'https://groupomania-back.onrender.com',
   'https://groupomania-front.onrender.com',
-  'https://groupomania-mu.vercel.app'
+  'https://groupomania-mu.vercel.app',
+  'https://groupomania-git-main-mars375s-projects.vercel.app',
+  'https://groupomania-mars375s-projects.vercel.app'
 ];
 const corsOptions = {
   origin: function (origin, callback) {
