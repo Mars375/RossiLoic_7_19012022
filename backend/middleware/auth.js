@@ -48,21 +48,29 @@ module.exports.requireAuth = (req, res, next) => {
   if (token) {
     jwt.verify(token, process.env.SECRET_TOKEN, async (error, decodedToken) => {
       if (error) {
-        console.log(error);
+        res.status(401).json({
+          isAuthenticated: false,
+          message: 'Invalid token'
+        })
       } else {
-        console.log(decodedToken.id);
-        next()
+        res.locals.user = decodedToken
+        res.status(200).json({
+          isAuthenticated: true,
+          user: decodedToken
+        })
       }
     })
   } else {
-    console.log('No token');
+    res.status(200).json({
+      isAuthenticated: false,
+      message: 'No token provided'
+    })
   }
 }
 
 module.exports.isUser = async (req, res, next) => {
   try {
-    if (res.locals.user.isAdmin)
-      return next()
+    if (res.locals.user.isAdmin) return next()
     const userProfil = await models.User.findOne({
       where: {
         id: req.params.id
