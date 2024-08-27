@@ -1,12 +1,5 @@
 const models = require('../models');
-const path = require('path');
 const cloudinary = require('cloudinary').v2;
-
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET
-});
 
 module.exports.getOnePost = async (req, res) => {
   try {
@@ -198,7 +191,8 @@ module.exports.updatePost = async (req, res) => {
     // Supprimez l'ancienne image de Cloudinary si une nouvelle image est téléchargée
     if (req.file) {
       if (post.attachment) {
-        const publicId = post.attachment.split('/').pop().split('.')[0];
+        const publicId = post.attachment.match(/\/(?:v\d+\/)?([^\/]+)\.[^.]+$/)[1];
+        console.log('Public ID to delete:', publicId); // Log du publicId
         await cloudinary.uploader.destroy(publicId);
       }
       attachmentURL = req.file.path; // URL de la nouvelle image sur Cloudinary
@@ -225,10 +219,10 @@ module.exports.deletePost = async (req, res) => {
   const post = await isCreator(req, res);
   if (!post) return;
   try {
+    // Supprimez l'image de Cloudinary si elle existe
     if (post.attachment) {
-      console.log('post.attachment : ' + post.attachment);
-      const publicId = post.attachment.split('/').pop().split('.')[0];
-      console.log('publicId : ' + publicId);
+      const publicId = post.attachment.match(/\/(?:v\d+\/)?([^\/]+)\.[^.]+$/)[1];
+      console.log('Public ID to delete:', publicId); // Log du publicId
       await cloudinary.uploader.destroy(publicId);
     }
 
