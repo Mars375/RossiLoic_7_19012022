@@ -10,7 +10,6 @@ const createToken = (id, isAdmin) => {
     id,
     isAdmin
   }, process.env.SECRET_TOKEN, {
-    expiresIn: '1h'
   });
 };
 
@@ -156,69 +155,4 @@ module.exports.logout = async (req, res) => {
     maxAge: 0
   });
   res.redirect(200, '/');
-};
-
-module.exports.loginGoogle = async (req, res) => {
-  const { OAuth2Client } = require('google-auth-library');
-  const client = new OAuth2Client({
-    clientId: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    redirectUri: 'http://localhost:8080'
-  });
-
-  // Call this function to validate OAuth2 authorization code sent from client-side
-  async function verifyCode(code) {
-    let newUser;
-    let { tokens } = await client.getToken(code);
-    client.setCredentials({ access_token: tokens.access_token });
-    const userinfo = await client.request({
-      url: 'https://www.googleapis.com/oauth2/v2/userinfo',
-    });
-    return userinfo;
-  }
-
-  verifyCode(req.body.code).then(async (userInfo) => {
-    // use userInfo and do your server-side logics here
-    const user = await models.User.findOne({
-      where: {
-        email: userInfo.data.email
-      }
-    });
-    if (!user) {
-      newUser = await models.User.create({
-        email: userInfo.data.email,
-        username: userInfo.data.name,
-        lastname: userInfo.data.family_name,
-        firstname: userInfo.data.given_name,
-        picture: userInfo.data.picture,
-        isAdmin: false,
-      });
-    } else {
-      newUser = user;
-    }
-    const token = createToken(newUser.id, newUser.isAdmin);
-    res.cookie('jwt', token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'None'
-    });
-
-    res.status(200).json({
-      user: {
-        id: newUser.id,
-        username: newUser.username,
-        admin: newUser.isAdmin,
-        picture: newUser.picture,
-        background: newUser.background,
-        firstname: newUser.firstname,
-        lastname: newUser.lastname,
-      },
-      message: "You are now logged in!"
-    });
-  }).catch((err) => {
-    console.log(err);
-    res.status(500).json({
-      error: err
-    });
-  });
 };
