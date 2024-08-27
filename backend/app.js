@@ -20,19 +20,10 @@ const {
 // Créer le répertoire tmp/uploads s'il n'existe pas
 const uploadDir = path.join(__dirname, '..', 'tmp', 'uploads');
 if (!fs.existsSync(uploadDir)) {
-  console.log(`Creating directory: ${uploadDir}`);
   fs.mkdirSync(uploadDir, { recursive: true });
 } else {
   console.log(`Directory already exists: ${uploadDir}`);
 }
-
-// Vérifiez les permissions du répertoire
-fs.access(uploadDir, fs.constants.R_OK, (err) => {
-  console.log(`${uploadDir} ${err ? 'is not readable' : 'is readable'}`);
-});
-fs.access(uploadDir, fs.constants.W_OK, (err) => {
-  console.log(`${uploadDir} ${err ? 'is not writable' : 'is writable'}`);
-});
 
 // Configuration CORS pour des origines spécifiques
 const allowedOrigins = [
