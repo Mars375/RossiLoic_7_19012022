@@ -1,7 +1,7 @@
 const http = require('http')
 const express = require('express')
 const cleanup = require('./utils/cleanup')
-const app = express()
+const app = require('./app')
 require('dotenv').config()
 
 const normalizePort = val => {
